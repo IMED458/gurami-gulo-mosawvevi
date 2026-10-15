@@ -1208,7 +1208,9 @@ html{-webkit-tap-highlight-color:transparent;}
   </main>
 </div>
 
-<audio id="music" src="assets/audio/music.mp3" loop preload="auto"></audio>
+<!-- preload="none": the track is ~7.6 MB, so it only starts downloading on the
+     envelope tap that also starts playback — not on every opening over mobile data. -->
+<audio id="music" src="assets/audio/music.mp3" loop preload="none"></audio>
 <button class="music-btn" id="musicBtn" type="button" aria-label="მუსიკის გამორთვა" aria-pressed="true">
   <svg class="icon-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
     <path d="M4 9.5h3.2L12 5.4v13.2L7.2 14.5H4z"/>

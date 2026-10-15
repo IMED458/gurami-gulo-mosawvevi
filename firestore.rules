@@ -6,10 +6,10 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     function isAdmin() {
-      // Put the organisers' login e-mails here (the accounts created in
-      // Firebase console → Authentication → Users). Lowercase.
+      // The organiser account. admin.html maps the "admin" username onto
+      // this e-mail (see assets/js/admin.js → toEmail / toPassword).
       return request.auth != null
-        && request.auth.token.email in ['organizer@example.com'];
+        && request.auth.token.email in ['admin@guramigulo.app'];
     }
 
     function validRsvp(d) {

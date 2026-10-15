@@ -18,6 +18,16 @@ let all = [];          // [{id, name, attendance, guests, message, createdAt: Da
 let filter = "all";
 let removeDoc = null;  // set once Firestore is up
 
+/* The organisers log in with a plain username/password (admin / admin).
+   Firebase Auth only knows e-mail accounts with passwords of 6+ characters,
+   so both are mapped onto the account created in the console:
+     admin / admin  ->  admin@guramigulo.app / admin#gg2026
+   firestore.rules grants read access to that e-mail only. */
+const LOGIN_DOMAIN = "guramigulo.app";
+const PASSWORD_SUFFIX = "#gg2026";
+const toEmail = (u) => (u.includes("@") ? u : `${u}@${LOGIN_DOMAIN}`).toLowerCase();
+const toPassword = (p) => p + PASSWORD_SUFFIX;
+
 /* ---------- rendering ---------- */
 
 const fmt = new Intl.DateTimeFormat("ka-GE", {
@@ -83,7 +93,7 @@ function render() {
 function showDataError(e) {
   console.error(e);
   els.dataError.textContent = e && e.code === "permission-denied"
-    ? "ამ ანგარიშს სიის ნახვის უფლება არ აქვს. ელ-ფოსტა უნდა იყოს firestore.rules-ის isAdmin() სიაში."
+    ? "ამ მომხმარებელს სიის ნახვის უფლება არ აქვს (იხ. firestore.rules → isAdmin)."
     : "მონაცემების წაკითხვა ვერ მოხერხდა: " + ((e && e.message) || e);
 }
 
@@ -146,11 +156,11 @@ async function startFirebase() {
     els.loginError.textContent = "";
     els.loginBtn.disabled = true;
     try {
-      await authMod.signInWithEmailAndPassword(auth, $("email").value.trim(), $("password").value);
+      await authMod.signInWithEmailAndPassword(auth, toEmail($("username").value.trim()), toPassword($("password").value));
     } catch (err) {
       els.loginError.textContent =
         ["auth/invalid-credential", "auth/wrong-password", "auth/user-not-found", "auth/invalid-email"].includes(err.code)
-          ? "ელ-ფოსტა ან პაროლი არასწორია."
+          ? "მომხმარებელი ან პაროლი არასწორია."
           : err.code === "auth/too-many-requests"
             ? "ძალიან ბევრი მცდელობა — სცადეთ ცოტა ხანში."
             : "შესვლა ვერ მოხერხდა: " + err.message;
@@ -169,7 +179,7 @@ async function startFirebase() {
     els.who.hidden = !user;
     if (!user) { all = []; render(); return; }
 
-    els.whoEmail.textContent = user.email;
+    els.whoEmail.textContent = (user.email || "").split("@")[0];
     const q = fs.query(fs.collection(db, RSVP_COLLECTION), fs.orderBy("createdAt", "desc"));
     unsubscribe = fs.onSnapshot(q, (snap) => {
       all = snap.docs.map((d) => {
