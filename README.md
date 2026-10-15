@@ -19,7 +19,7 @@ assets/js/rsvp-store.js   სტუმრის პასუხის ჩაწ�
 assets/js/admin.js        პანელის ლოგიკა (შესვლა, სია, CSV, წაშლა)
 assets/photos/1..7.jpg    წყვილის ფოტოები
 assets/akhaltsikhe/       ლოკაციების ფოტოები (ეკლესია, რაბათი, Inn, რომანტიკა)
-assets/audio/music.mp3    ფონური მუსიკა (უნდა იყოს Indila — Love Story; ჯერ დროებითი ტრეკია)
+assets/audio/music.mp3    ფონური მუსიკა — Indila, Love Story
 assets/og.jpg             ლინკის preview (Messenger/Instagram)
 tools/rabati_svg.py       რაბათის სილუეტის გენერატორი
 tools/paint.py            ფოტო → ნახატისებრი ილუსტრაცია
@@ -43,13 +43,17 @@ tools/paint.py            ფოტო → ნახატისებრი ი
 
 1. **Build → Firestore Database → Create database** (production mode, რეგიონი `europe-west`).
 2. **Build → Authentication → Get started → Email/Password → Enable.**
-   შემდეგ **Users → Add user** — ორგანიზატორის ელ-ფოსტა და პაროლი.
-3. `firestore.rules`-ში, `isAdmin()`-ში ჩაწერე ორგანიზატორ(ებ)ის ელ-ფოსტა (პატარა ასოებით).
-4. Rules-ის ატვირთვა — ან Firestore → **Rules** ჩანართში ჩააკოპირე და **Publish**, ან:
+   შემდეგ **Users → Add user**:
+   - Email: `admin@guramigulo.app`
+   - Password: `admin#gg2026`
+
+   `admin.html`-ზე შესვლა ხდება **admin / admin**-ით — გვერდი თავად გარდაქმნის
+   მას ზემოთ მოცემულ ანგარიშად (Firebase-ს ელ-ფოსტა და 6+ სიმბოლოიანი პაროლი სჭირდება).
+3. Rules-ის ატვირთვა — ან Firestore → **Rules** ჩანართში ჩააკოპირე და **Publish**, ან:
    ```bash
    firebase deploy --only firestore:rules --project guramigulo-71947
    ```
-5. **Authentication → Settings → Authorized domains** — დაამატე საიტის დომენი
+4. **Authentication → Settings → Authorized domains** — დაამატე საიტის დომენი
    (მაგ. `imed458.github.io`).
 
 წესები: სტუმარს (შესვლის გარეშე) შეუძლია მხოლოდ **დაამატოს** სწორი ფორმის პასუხი;
