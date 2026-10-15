@@ -20,7 +20,7 @@ assets/js/admin.js        პანელის ლოგიკა (შესვ
 assets/photos/1..7.jpg    წყვილის ფოტოები
 assets/akhaltsikhe/       ლოკაციების ფოტოები (ეკლესია, რაბათი, Inn, რომანტიკა)
 assets/audio/music.mp3    ფონური მუსიკა — Indila, Love Story
-assets/og.jpg             ლინკის preview (Messenger/Instagram)
+assets/og-v2.jpg          ლინკის preview (Messenger/WhatsApp/Instagram)
 tools/rabati_svg.py       რაბათის სილუეტის გენერატორი
 tools/paint.py            ფოტო → ნახატისებრი ილუსტრაცია
 ```
