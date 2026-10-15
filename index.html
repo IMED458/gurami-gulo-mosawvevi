@@ -6,7 +6,7 @@
 <title>გურამი &amp; გულო</title>
 <meta name="description" content="ქორწილის ციფრული მოსაწვევი — ახალციხე, 24 ოქტომბერი 2026. RSVP, დღის განრიგი და ლოკაციები.">
 <meta name="theme-color" content="#FAF4E8">
-<meta name="build" content="20261015233948">
+<meta name="build" content="20261015235359">
 <meta http-equiv="Cache-Control" content="no-cache">
 <script>
 /* Messenger / Instagram / Facebook open links in an in-app browser that
@@ -340,10 +340,10 @@ html.gate-lock,html.gate-lock body{overflow:hidden;height:100%;}
 .gate-closed.opening .gate-tap{opacity:0;animation:none;}
 
 .gate-tap{
-  font-family:var(--font-body);font-size:.95rem;letter-spacing:.06em;color:var(--g-soft);
+  font-family:var(--font-body);font-size:clamp(1.1rem,4.8vw,1.25rem);font-weight:600;letter-spacing:.03em;color:var(--g-ink);
   animation:tapPulse 2.4s ease-in-out infinite;transition:opacity .3s ease;
 }
-@keyframes tapPulse{0%,100%{opacity:.6;}50%{opacity:1;}}
+@keyframes tapPulse{0%,100%{opacity:.78;}50%{opacity:1;}}
 .gate-monogram{
   display:flex;flex-wrap:wrap;align-items:baseline;justify-content:center;gap:.22em;
   font-family:var(--font-display);font-size:clamp(2.3rem,11.5vw,4.1rem);
@@ -472,7 +472,7 @@ body.opened .rabati-scene{opacity:1;transform:none;}
 
 .hero-content{
   position:relative;z-index:3;width:min(100%,720px);text-align:center;
-  padding:14vh 0 calc(var(--scene-h) + 4vh);
+  padding:14vh 0 calc(var(--scene-h) + 4vh + 70px);
   opacity:0;transform:translateY(26px) scale(.985);
   transition:opacity 1.2s ease 1.8s,transform 1.2s ease 1.8s;
 }
@@ -494,14 +494,15 @@ body.opened .hero-content{opacity:1;transform:none;}
   text-transform:uppercase;color:var(--ink-soft);
 }
 .scroll-indicator{
-  position:absolute;left:50%;bottom:22px;transform:translateX(-50%);z-index:3;
-  display:grid;justify-items:center;gap:10px;color:#F6EEDC;opacity:0;
+  /* Sits in the sky just above the fortress, where dark text reads well. */
+  position:absolute;left:50%;bottom:calc(var(--scene-h) + 14px);transform:translateX(-50%);z-index:3;
+  display:grid;justify-items:center;gap:8px;color:var(--ink);opacity:0;white-space:nowrap;
 }
 body.opened .scroll-indicator{animation:indicatorIn 1.2s ease 2.6s both;}
-.scroll-line{width:1px;height:46px;transform-origin:top;
+.scroll-line{width:2px;height:34px;transform-origin:top;
   background:linear-gradient(to bottom,transparent,currentColor,transparent);
   animation:scrollLine 2.5s ease-in-out infinite;}
-.scroll-text{font-size:.62rem;letter-spacing:.38em;text-transform:uppercase;}
+.scroll-text{font-size:clamp(1.05rem,4.4vw,1.2rem);font-weight:600;letter-spacing:.03em;}
 @keyframes indicatorIn{0%{opacity:0;transform:translateX(-50%) translateY(12px);}100%{opacity:1;transform:translateX(-50%);}}
 @keyframes scrollLine{0%,100%{transform:scaleY(.5);opacity:.45;}50%{transform:scaleY(1);opacity:1;}}
 
@@ -925,8 +926,8 @@ html{-webkit-tap-highlight-color:transparent;}
     </div>
 
     <div class="scroll-indicator" aria-hidden="true">
+      <div class="scroll-text">ჩამოსქროლეთ</div>
       <div class="scroll-line"></div>
-      <div class="scroll-text">scroll</div>
     </div>
   </header>
 
@@ -1226,7 +1227,7 @@ html{-webkit-tap-highlight-color:transparent;}
 <div class="petal-layer" id="petalLayer" aria-hidden="true"></div>
 
 <!-- RSVP storage (Firebase). Loaded as a module; exposes window.rsvpStore. -->
-<script type="module" src="assets/js/rsvp-store.js?v=20261015233948"></script>
+<script type="module" src="assets/js/rsvp-store.js?v=20261015235359"></script>
 
 <script>
 (function(){
