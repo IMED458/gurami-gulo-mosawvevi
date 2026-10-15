@@ -1176,7 +1176,7 @@ html{-webkit-tap-highlight-color:transparent;}
 
           <div class="success-message" id="successMessage" aria-live="polite">
             <div class="success-icon">🍂</div>
-            <h3 class="success-title">მადლობა</h3>
+            <h3 class="success-title" id="successTitle">მადლობა</h3>
             <p class="success-copy" id="successCopy"></p>
             <button class="link-button" type="button" id="rsvpAgain">სხვა სტუმრის დამატება</button>
           </div>
@@ -1669,6 +1669,7 @@ html{-webkit-tap-highlight-color:transparent;}
   var formError      = document.getElementById("formError");
   var successMessage = document.getElementById("successMessage");
   var successCopy    = document.getElementById("successCopy");
+  var successTitle   = document.getElementById("successTitle");
   var petalLayer     = document.getElementById("petalLayer");
   var SENT_KEY = "gg_rsvp_sent";
 
@@ -1728,8 +1729,10 @@ html{-webkit-tap-highlight-color:transparent;}
   function showSuccess(entry, celebrate){
     rsvpFormWrap.style.display = "none";
     successMessage.classList.add("show");
+    // Coming: "მადლობა! მოუთმენლად გელით." — the title carries the first half.
+    successTitle.textContent = entry.attendance === "yes" ? "მადლობა!" : "მადლობა";
     successCopy.textContent = entry.attendance === "yes"
-      ? "ძალიან გვიხარია, " + entry.name + ", რომ " + (entry.guests > 1 ? entry.guests + " სტუმართან ერთად " : "") + "ჩვენს დღეს გაგვიზიარებთ."
+      ? "მოუთმენლად გელით."
       : "მადლობა, " + entry.name + ". თქვენი პასუხი მივიღეთ და მთელი გულით ვგრძნობთ თქვენს სითბოს ამ დღისთვის.";
     if(celebrate && entry.attendance === "yes") createPetals();
   }
