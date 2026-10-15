@@ -1,0 +1,3 @@
+#!/bin/sh
+# Fresh build id on every commit, so phones holding a cached copy reload.
+python3 tools/stamp_build.py >/dev/null && git add index.html admin.html

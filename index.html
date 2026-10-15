@@ -6,6 +6,32 @@
 <title>გურამი &amp; გულო</title>
 <meta name="description" content="ქორწილის ციფრული მოსაწვევი — ახალციხე, 24 ოქტომბერი 2026. RSVP, დღის განრიგი და ლოკაციები.">
 <meta name="theme-color" content="#FAF4E8">
+<meta name="build" content="20261015232541">
+<meta http-equiv="Cache-Control" content="no-cache">
+<script>
+/* Messenger / Instagram / Facebook open links in an in-app browser that
+   keeps serving an old cached copy of the page. Ask the server (bypassing
+   every cache) which build is live; if it is newer than this one, reload
+   once on a fresh URL so the guest always sees the current invitation.
+   The build id is stamped by tools/stamp_build.py on each commit. */
+(function(){
+  try{
+    var here = document.querySelector('meta[name="build"]').content;
+    if(!window.fetch || location.protocol === "file:") return;
+    fetch(location.pathname + "?_=" + Date.now(), {cache:"no-store"})
+      .then(function(r){ return r.ok ? r.text() : ""; })
+      .then(function(t){
+        var m = t.match(/<meta name="build" content="20261015232541"]+)"/);
+        if(!m || m[1] === here) return;
+        var key = "gg_reload_" + m[1];          // never loop on the same build
+        try{ if(sessionStorage.getItem(key)) return; sessionStorage.setItem(key, "1"); }catch(e){}
+        var u = new URL(location.href);
+        u.searchParams.set("v", m[1]);
+        location.replace(u.toString());
+      })["catch"](function(){});
+  }catch(e){}
+})();
+</script>
 <!-- Link preview. Messenger and Instagram read these, and the image url
      must be ABSOLUTE — a relative one silently yields no preview.
      Update the domain once the repository is published. -->
@@ -1205,7 +1231,7 @@ html{-webkit-tap-highlight-color:transparent;}
 <div class="petal-layer" id="petalLayer" aria-hidden="true"></div>
 
 <!-- RSVP storage (Firebase). Loaded as a module; exposes window.rsvpStore. -->
-<script type="module" src="assets/js/rsvp-store.js"></script>
+<script type="module" src="assets/js/rsvp-store.js?v=20261015232541"></script>
 
 <script>
 (function(){
