@@ -6,7 +6,7 @@
 <title>გურამი &amp; გულო</title>
 <meta name="description" content="ქორწილის ციფრული მოსაწვევი — ახალციხე, 24 ოქტომბერი 2026. RSVP, დღის განრიგი და ლოკაციები.">
 <meta name="theme-color" content="#FAF4E8">
-<meta name="build" content="20261015232541">
+<meta name="build" content="20261015232602">
 <meta http-equiv="Cache-Control" content="no-cache">
 <script>
 /* Messenger / Instagram / Facebook open links in an in-app browser that
@@ -21,7 +21,7 @@
     fetch(location.pathname + "?_=" + Date.now(), {cache:"no-store"})
       .then(function(r){ return r.ok ? r.text() : ""; })
       .then(function(t){
-        var m = t.match(/<meta name="build" content="20261015232541"]+)"/);
+        var m = t.match(/name=.build. content="(\d+)"/);   // first hit is the meta tag
         if(!m || m[1] === here) return;
         var key = "gg_reload_" + m[1];          // never loop on the same build
         try{ if(sessionStorage.getItem(key)) return; sessionStorage.setItem(key, "1"); }catch(e){}
@@ -1231,7 +1231,7 @@ html{-webkit-tap-highlight-color:transparent;}
 <div class="petal-layer" id="petalLayer" aria-hidden="true"></div>
 
 <!-- RSVP storage (Firebase). Loaded as a module; exposes window.rsvpStore. -->
-<script type="module" src="assets/js/rsvp-store.js?v=20261015232541"></script>
+<script type="module" src="assets/js/rsvp-store.js?v=20261015232602"></script>
 
 <script>
 (function(){
