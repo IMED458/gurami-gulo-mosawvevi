@@ -1,0 +1,37 @@
+rules_version = '2';
+
+// Guests (no login) may only ADD a well-formed RSVP.
+// Only the organisers listed in isAdmin() may read, edit or delete them.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAdmin() {
+      // Put the organisers' login e-mails here (the accounts created in
+      // Firebase console → Authentication → Users). Lowercase.
+      return request.auth != null
+        && request.auth.token.email in ['organizer@example.com'];
+    }
+
+    function validRsvp(d) {
+      return d.keys().hasOnly(['name', 'attendance', 'guests', 'message', 'createdAt'])
+        && d.keys().hasAll(['name', 'attendance', 'guests', 'message', 'createdAt'])
+        && d.name is string && d.name.size() > 0 && d.name.size() <= 120
+        && d.attendance in ['yes', 'no']
+        && d.guests is int
+        && ((d.attendance == 'yes' && d.guests >= 1 && d.guests <= 20)
+            || (d.attendance == 'no' && d.guests == 0))
+        && d.message is string && d.message.size() <= 1000
+        && d.createdAt == request.time;
+    }
+
+    match /rsvps/{id} {
+      allow create: if validRsvp(request.resource.data);
+      allow read, delete: if isAdmin();
+      allow update: if isAdmin();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

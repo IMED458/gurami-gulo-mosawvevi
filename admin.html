@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>სტუმრების სია · გურამი &amp; გულო</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#FAF4E8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Noto+Sans+Georgian:wght@300;400;500;600&family=Noto+Serif+Georgian:wght@400;500&display=swap">
+<style>
+@font-face{
+  font-family:"DM Elene Akhvlediani";
+  src:url("assets/fonts/dm-elene-akhvlediani.ttf") format("truetype");
+  unicode-range:U+10A0-10FF,U+1C90-1CBF,U+2D00-2D2F;
+  font-display:swap;
+}
+:root{
+  --bg:#FAF4E8; --surface:#FFFDF8; --surface-2:#F3EADA;
+  --ink:#2E2820; --ink-soft:#62584A; --ink-faint:#968A78;
+  --accent:#5C6B3A; --gold:#B0894A; --rose:#B0505E;
+  --yes:#5E7F3A; --yes-bg:rgba(110,140,70,.14);
+  --no:#A9505F;  --no-bg:rgba(196,110,124,.13);
+  --line:rgba(46,40,32,.13);
+  --shadow:0 18px 44px -26px rgba(52,40,24,.45);
+  --font-display:"DM Elene Akhvlediani","Noto Serif Georgian",Georgia,serif;
+  --font-body:"Noto Sans Georgian",-apple-system,"Segoe UI",sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;}
+body{margin:0;min-width:320px;font-family:var(--font-body);font-weight:400;color:var(--ink);line-height:1.6;
+  background:radial-gradient(ellipse at 50% -10%,#FFFBF2 0%,transparent 60%),var(--bg);min-height:100vh;}
+button,input,select{font:inherit;color:inherit;}
+button{cursor:pointer;}
+h1,h2{font-family:var(--font-display);font-weight:400;margin:0;}
+[hidden]{display:none !important;}
+
+.wrap{max-width:1040px;margin:0 auto;padding:28px 16px 60px;}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:26px;}
+.brand{display:grid;gap:2px;}
+.brand small{font-size:.66rem;letter-spacing:.28em;text-transform:uppercase;color:var(--accent);font-weight:500;}
+.brand h1{font-size:clamp(1.6rem,5vw,2.1rem);line-height:1.25;}
+.brand h1 .amp{font-family:"Great Vibes",cursive;color:var(--gold);margin:0 .12em;}
+.who{display:flex;align-items:center;gap:10px;font-size:.82rem;color:var(--ink-soft);}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;padding:9px 18px;border-radius:999px;
+  border:1px solid var(--line);background:var(--surface);font-size:.82rem;transition:border-color .2s,transform .2s;}
+.btn:hover{border-color:var(--accent);transform:translateY(-1px);}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#FAF4E8;}
+.btn svg{width:16px;height:16px;}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);}
+.notice{padding:14px 18px;margin-bottom:18px;border-radius:14px;font-size:.88rem;line-height:1.6;
+  background:#FFF6E2;border:1px solid rgba(176,137,74,.4);color:#6B5122;}
+.notice code{font-size:.82rem;background:rgba(176,137,74,.14);padding:1px 6px;border-radius:5px;}
+
+/* Login */
+.login{max-width:400px;margin:8vh auto 0;padding:30px 24px;text-align:center;}
+.login h2{font-size:1.5rem;margin-bottom:6px;}
+.login p{color:var(--ink-soft);font-size:.9rem;margin:0 0 20px;}
+.login form{display:grid;gap:12px;text-align:left;}
+.login label{font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-faint);}
+.input{width:100%;min-height:48px;padding:11px 14px;border-radius:12px;border:1px solid var(--line);background:#FFFEFB;outline:none;}
+.input:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(92,107,58,.14);}
+.login .btn{width:100%;min-height:50px;border-radius:12px;margin-top:6px;}
+.error{color:var(--rose);font-size:.85rem;min-height:1.3em;text-align:center;}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:18px;}
+.stat{padding:18px 16px;}
+.stat .num{font-family:var(--font-display);font-size:clamp(1.8rem,5vw,2.4rem);line-height:1.1;font-variant-numeric:tabular-nums;}
+.stat .lbl{font-size:.78rem;color:var(--ink-soft);margin-top:4px;}
+.stat.yes .num{color:var(--yes);}
+.stat.no .num{color:var(--no);}
+.stat.total .num{color:var(--gold);}
+@media (max-width:700px){ .stats{grid-template-columns:repeat(2,minmax(0,1fr));} }
+
+/* Toolbar */
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:12px;margin-bottom:14px;}
+.toolbar .search{flex:1 1 220px;min-height:42px;}
+.tabs{display:flex;gap:4px;padding:4px;border-radius:999px;background:var(--surface-2);}
+.tab{border:0;background:none;padding:7px 14px;border-radius:999px;font-size:.82rem;color:var(--ink-soft);}
+.tab.on{background:var(--surface);color:var(--ink);box-shadow:0 2px 8px -4px rgba(0,0,0,.25);}
+
+/* List */
+.list{overflow:hidden;}
+table{width:100%;border-collapse:collapse;}
+th{font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint);font-weight:500;text-align:left;padding:14px 16px;border-bottom:1px solid var(--line);background:var(--surface-2);}
+td{padding:14px 16px;border-bottom:1px solid var(--line);vertical-align:top;font-size:.92rem;}
+tr:last-child td{border-bottom:0;}
+td.name{font-weight:500;}
+td.num{font-variant-numeric:tabular-nums;text-align:center;}
+td.msg{color:var(--ink-soft);max-width:340px;white-space:pre-wrap;word-break:break-word;}
+td.when{color:var(--ink-faint);font-size:.8rem;white-space:nowrap;}
+.pill{display:inline-block;padding:3px 11px;border-radius:999px;font-size:.78rem;white-space:nowrap;}
+.pill.yes{background:var(--yes-bg);color:var(--yes);}
+.pill.no{background:var(--no-bg);color:var(--no);}
+.del{border:0;background:none;color:var(--ink-faint);padding:4px;border-radius:8px;}
+.del:hover{color:var(--rose);background:var(--no-bg);}
+.del svg{width:17px;height:17px;display:block;}
+.empty{padding:40px 16px;text-align:center;color:var(--ink-faint);}
+
+@media (max-width:700px){
+  thead{display:none;}
+  table,tbody,tr,td{display:block;width:100%;}
+  tr{position:relative;padding:14px 16px;border-bottom:1px solid var(--line);}
+  tr:last-child{border-bottom:0;}
+  td{padding:0;border:0;}
+  td.name{font-size:1rem;padding-right:40px;}
+  td.status,td.num,td.when{display:inline-block;width:auto;margin:6px 12px 0 0;}
+  td.num::before{content:"სტუმარი: ";color:var(--ink-faint);font-size:.8rem;}
+  td.msg{margin-top:8px;max-width:none;}
+  td.msg:empty{display:none;}
+  td.act{position:absolute;top:10px;right:10px;width:auto;}
+}
+.foot{margin-top:16px;font-size:.78rem;color:var(--ink-faint);text-align:center;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <small>ორგანიზატორის პანელი</small>
+      <h1>გურამი<span class="amp">&amp;</span>გულო</h1>
+    </div>
+    <div class="who" id="who" hidden>
+      <span id="whoEmail"></span>
+      <button class="btn" id="signOut" type="button">გასვლა</button>
+    </div>
+  </header>
+
+  <div class="notice" id="notConfigured" hidden>
+    Firebase ჯერ არ არის დაკავშირებული — შეავსეთ <code>firebase-config.js</code>.
+    მანამდე აქ ჩანს მხოლოდ ამ ბრაუზერში ლოკალურად შენახული სატესტო პასუხები.
+  </div>
+
+  <!-- Login -->
+  <section class="panel login" id="loginView" hidden>
+    <h2>შესვლა</h2>
+    <p>სტუმრების პასუხების სანახავად შედით ორგანიზატორის ანგარიშით.</p>
+    <form id="loginForm">
+      <label for="email">ელ-ფოსტა</label>
+      <input class="input" id="email" type="email" autocomplete="username" required>
+      <label for="password">პაროლი</label>
+      <input class="input" id="password" type="password" autocomplete="current-password" required>
+      <button class="btn primary" type="submit" id="loginBtn">შესვლა</button>
+      <div class="error" id="loginError" role="alert"></div>
+    </form>
+  </section>
+
+  <!-- Dashboard -->
+  <section id="dashView" hidden>
+    <div class="stats">
+      <div class="panel stat"><div class="num" id="sResponses">0</div><div class="lbl">პასუხი სულ</div></div>
+      <div class="panel stat yes"><div class="num" id="sYes">0</div><div class="lbl">მოდის (პასუხი)</div></div>
+      <div class="panel stat total"><div class="num" id="sGuests">0</div><div class="lbl">სტუმარი სულ</div></div>
+      <div class="panel stat no"><div class="num" id="sNo">0</div><div class="lbl">ვერ მოდის</div></div>
+    </div>
+
+    <div class="panel toolbar">
+      <input class="input search" id="search" type="search" placeholder="ძებნა სახელით ან შეტყობინებით…">
+      <div class="tabs" role="tablist">
+        <button class="tab on" data-filter="all" type="button">ყველა</button>
+        <button class="tab" data-filter="yes" type="button">მოდის</button>
+        <button class="tab" data-filter="no" type="button">ვერ მოდის</button>
+      </div>
+      <button class="btn" id="exportCsv" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19.5h14"/></svg>
+        CSV
+      </button>
+    </div>
+
+    <div class="panel list">
+      <table>
+        <thead><tr><th>სახელი</th><th>სტატუსი</th><th>სტუმარი</th><th>შეტყობინება</th><th>დრო</th><th></th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+      <div class="empty" id="empty" hidden>ჯერ პასუხები არ არის.</div>
+    </div>
+    <p class="foot">სია ახლდება ავტომატურად, როგორც კი ახალი პასუხი შემოვა.</p>
+  </section>
+
+  <div class="error" id="dataError" role="alert"></div>
+</div>
+
+<script type="module" src="assets/js/admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,1802 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>გურამი &amp; გულო</title>
+<meta name="description" content="ქორწილის ციფრული მოსაწვევი — ახალციხე, 24 ოქტომბერი 2026. RSVP, დღის განრიგი და ლოკაციები.">
+<meta name="theme-color" content="#FAF4E8">
+<!-- Link preview. Messenger and Instagram read these, and the image url
+     must be ABSOLUTE — a relative one silently yields no preview.
+     Update the domain once the repository is published. -->
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ka_GE">
+<meta property="og:site_name" content="გურამი &amp; გულო">
+<meta property="og:url" content="https://imed458.github.io/gurami-gulo-mosawvevi/">
+<meta property="og:title" content="გურამი &amp; გულო — 24 ოქტომბერი 2026, ახალციხე">
+<meta property="og:description" content="სიხარულით გიწვევთ ჩვენს ქორწილში.">
+<meta property="og:image" content="https://imed458.github.io/gurami-gulo-mosawvevi/assets/og.jpg">
+<meta property="og:image:secure_url" content="https://imed458.github.io/gurami-gulo-mosawvevi/assets/og.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="გურამი და გულო რაბათის ციხეში">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="გურამი &amp; გულო — 24 ოქტომბერი 2026, ახალციხე">
+<meta name="twitter:description" content="სიხარულით გიწვევთ ჩვენს ქორწილში.">
+<meta name="twitter:image" content="https://imed458.github.io/gurami-gulo-mosawvevi/assets/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Great+Vibes&family=Noto+Sans+Georgian:wght@300;400;500;600&family=Noto+Serif+Georgian:wght@300;400;500;600&display=swap">
+<style>
+@font-face{
+  font-family:"DM Elene Akhvlediani";
+  src:url("assets/fonts/dm-elene-akhvlediani.ttf") format("truetype");
+  unicode-range:U+10A0-10FF,U+1C90-1CBF,U+2D00-2D2F;
+  font-weight:400;font-style:normal;font-display:swap;
+}
+/* ============================================================
+   TOKENS
+   Day and night are only the two ENDPOINTS. Everything in between
+   is interpolated per scroll frame in JS (see applyPhase) and
+   written back onto :root — that is what makes the page dusk
+   gradually over Rabati instead of flipping between two themes.
+   ============================================================ */
+:root{
+  /* day (scroll position 0) — Meskhetian stone, olive and old gold */
+  --bg:#FAF4E8;
+  --surface:rgba(255,252,245,.74);
+  --surface-2:rgba(241,231,212,.82);
+  --ink:#2E2820;
+  --ink-soft:#62584A;
+  --ink-faint:#968A78;
+  --accent:#5C6B3A;
+  --rose:#B06C52;
+  --gold:#B0894A;
+  --line:rgba(46,40,32,.15);
+  --shadow:0 18px 50px -24px rgba(52,40,24,.40);
+
+  --radius:20px;
+  --radius-sm:12px;
+  --maxw:1060px;
+  --scene-h:clamp(190px,34vw + 80px,340px);
+
+  --font-display:"DM Elene Akhvlediani","Noto Serif Georgian","Cormorant Garamond",Georgia,serif;
+  --font-body:"Noto Sans Georgian","Montserrat",-apple-system,"Segoe UI",sans-serif;
+  --font-script:"Great Vibes","Cormorant Garamond",cursive;
+
+  /* 0 = full day, 1 = full night; --dusk peaks while the sun goes down. */
+  --night:0;
+  --dusk:0;
+}
+
+*,*::before,*::after{box-sizing:border-box;}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;}
+@media (prefers-reduced-motion:reduce){ html{scroll-behavior:auto;} }
+
+body{
+  margin:0;
+  min-width:320px;
+  font-family:var(--font-body);
+  font-size:16px;
+  font-weight:300;
+  line-height:1.75;
+  color:var(--ink);
+  background:var(--bg);
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+  /* Swells only across the stretch of scroll where the ink crosses the
+     sky's own lightness, so text never sits grey-on-grey. JS drives it. */
+  text-shadow:var(--text-halo,none);
+}
+img,svg,canvas{max-width:100%;display:block;}
+button,input,textarea{font:inherit;color:inherit;}
+a{color:inherit;}
+h1,h2,h3{font-family:var(--font-display);font-weight:400;margin:0;text-wrap:balance;}
+p{margin:0;}
+button{cursor:pointer;}
+.btn,.submit-button,.attend-button,.counter-btn,.text-input,.loc-badge,.gate-tap,.link-button{text-shadow:none;}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
+
+.container{max-width:var(--maxw);margin:0 auto;padding:0 clamp(20px,5.5vw,44px);}
+
+/* ============================================================
+   SKY — one fixed backdrop for the WHOLE page, so the dusk is
+   continuous from the first section to the footer.
+   ============================================================ */
+.skydome{position:fixed;inset:0;z-index:0;pointer-events:none;}
+.sky-day,.sky-dusk,.sky-night{position:absolute;inset:0;}
+.sky-day{
+  background:linear-gradient(180deg,#CBDDE8 0%,#E4EAE2 24%,#F6EEDC 55%,#FAF4E8 78%,#F1E3C9 100%);
+}
+/* The Meskheti sunset: a warm band that blooms between day and night. */
+.sky-dusk{
+  opacity:calc(var(--dusk)*.78);
+  background:linear-gradient(180deg,#5B6585 0%,#B57B74 34%,#E59A62 62%,#F3C487 84%,#F6DDB0 100%);
+}
+.sky-night{
+  opacity:var(--night);
+  background:linear-gradient(180deg,#05070E 0%,#0A0E1A 30%,#10141F 60%,#141824 82%,#181B25 100%);
+}
+#starfield{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:calc(var(--night)*var(--night));}
+
+.celestial{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+/* Shell: position only. JS owns its transform/opacity as the sun sets. */
+.sun{position:absolute;top:8vh;right:8vw;width:clamp(74px,12vw,112px);aspect-ratio:1;}
+.sun-core{
+  position:absolute;inset:0;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,252,240,1) 0%,rgba(255,238,186,.96) 34%,rgba(255,212,122,.58) 60%,rgba(255,196,100,.10) 84%,transparent 100%);
+  box-shadow:0 0 30px rgba(255,240,186,.50),0 0 80px rgba(255,212,120,.34),0 0 128px rgba(255,190,100,.18);
+  opacity:0;transform:scale(.7);
+}
+body.opened .sun-core{animation:sunEntrance 1.6s cubic-bezier(.2,.9,.2,1) .35s forwards, sunPulse 5s ease-in-out 1.95s infinite;}
+.sun-rays{
+  position:absolute;inset:-90%;border-radius:50%;
+  background:conic-gradient(from 0deg,
+    rgba(255,240,190,.18) 0deg 14deg, transparent 14deg 40deg,
+    rgba(255,240,190,.14) 40deg 52deg, transparent 52deg 88deg,
+    rgba(255,240,190,.16) 88deg 104deg, transparent 104deg 140deg,
+    rgba(255,240,190,.12) 140deg 154deg, transparent 154deg 198deg,
+    rgba(255,240,190,.15) 198deg 212deg, transparent 212deg 250deg,
+    rgba(255,240,190,.12) 250deg 262deg, transparent 262deg 304deg,
+    rgba(255,240,190,.15) 304deg 318deg, transparent 318deg 360deg);
+  filter:blur(8px);animation:sunRays 22s linear infinite;
+}
+.moon{
+  position:absolute;top:8vh;left:8vw;
+  width:clamp(46px,7vw,70px);aspect-ratio:1;border-radius:50%;
+  background:radial-gradient(circle at 36% 34%,#FFFDF6 0%,#EFEADB 46%,#CFCBBD 72%,rgba(190,187,175,.25) 92%,transparent 100%);
+  box-shadow:0 0 20px rgba(236,232,220,.28),0 0 54px rgba(214,200,168,.16);
+  opacity:0;
+}
+.moon::after{
+  content:"";position:absolute;inset:0;border-radius:50%;
+  background:radial-gradient(circle at 64% 30%,rgba(168,168,152,.22) 0 9%,transparent 10%),
+             radial-gradient(circle at 38% 62%,rgba(168,168,152,.18) 0 12%,transparent 13%),
+             radial-gradient(circle at 60% 66%,rgba(168,168,152,.14) 0 7%,transparent 8%);
+}
+@keyframes sunPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.05);}}
+@keyframes sunEntrance{0%{opacity:0;transform:scale(.66);filter:blur(10px);}100%{opacity:1;transform:scale(1);filter:blur(0);}}
+@keyframes sunRays{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+
+.page{position:relative;z-index:1;overflow-x:hidden;overflow-x:clip;}
+/* iOS lets a page wobble sideways if anything pokes past the edge, even
+   with overflow-x hidden on body — clip it at the page wrapper as well. */
+
+/* ============================================================
+   SHARED PIECES
+   ============================================================ */
+.eyebrow{
+  font-size:.7rem;letter-spacing:.30em;text-transform:uppercase;
+  color:var(--accent);font-weight:500;
+}
+.divider{display:flex;align-items:center;justify-content:center;gap:14px;margin:22px auto 0;max-width:230px;}
+.divider::before,.divider::after{content:"";flex:1;height:1px;background:linear-gradient(to right,transparent,var(--gold),transparent);opacity:.7;}
+.divider span{width:12px;height:12px;color:var(--gold);display:grid;place-items:center;}
+.divider span::before{content:"";width:9px;height:9px;background:currentColor;
+  clip-path:path("M4.5 8.6C2 6.6 0 5 0 3 0 1.4 1.2.3 2.4.3c.9 0 1.6.5 2.1 1.2C5 .8 5.7.3 6.6.3 7.8.3 9 1.4 9 3c0 2-2 3.6-4.5 5.6Z");}
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  min-height:52px;padding:14px 30px;border-radius:999px;
+  border:1px solid color-mix(in srgb,var(--accent) 45%,transparent);
+  background:var(--accent);color:var(--bg);
+  font-size:.76rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase;
+  text-decoration:none;
+  box-shadow:0 14px 34px -18px color-mix(in srgb,var(--accent) 90%,transparent);
+  transition:transform .32s cubic-bezier(.34,1.56,.64,1),box-shadow .25s ease,background-color .5s linear,opacity .2s ease;
+}
+.btn:hover{transform:translateY(-2px);box-shadow:0 20px 42px -18px color-mix(in srgb,var(--accent) 95%,transparent);}
+.btn:active{transform:scale(.97);transition:transform .1s ease;}
+.btn:disabled{opacity:.55;cursor:not-allowed;transform:none;}
+
+section{padding:clamp(60px,9vw,104px) 0;position:relative;}
+.section-head{max-width:620px;margin:0 auto 42px;text-align:center;}
+.section-head h2{font-size:clamp(1.95rem,6.6vw,2.85rem);line-height:1.3;margin-top:12px;}
+.section-head p{color:var(--ink-soft);margin-top:14px;}
+
+/* Reveal in, then dissolve out again once scrolled past — kept
+   scroll-linked (no CSS opacity transition) so it tracks the finger. */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .85s cubic-bezier(.2,.7,.3,1),transform .85s cubic-bezier(.2,.7,.3,1);}
+.reveal.is-visible{opacity:1;transform:translateY(0);}
+.reveal.scroll-linked{transition:transform .85s cubic-bezier(.2,.7,.3,1);}
+@media (prefers-reduced-motion:reduce){ .reveal{transition:opacity .35s ease;transform:none;} }
+
+/* ============================================================
+   INTRO GATE — a sealed envelope over Rabati. The seal lifts, the
+   flap opens, the letter rises; then three panels crossfade and
+   the whole card dissolves into the hero underneath.
+   ============================================================ */
+html.gate-lock,html.gate-lock body{overflow:hidden;height:100%;}
+#gate{
+  /* Fixed warm palette on purpose: the opening card always reads as a
+     printed invitation, it never follows the page's day/night state. */
+  --g-bg:#F6EFE1; --g-ink:#2E2820; --g-soft:#6B604F; --g-gold:#B0894A; --g-olive:#5C6B3A;
+  position:fixed;inset:0;z-index:500;
+  display:flex;align-items:center;justify-content:center;
+  background:
+    radial-gradient(ellipse at 50% 38%,rgba(255,252,244,.95) 0%,rgba(246,239,225,0) 62%),
+    radial-gradient(ellipse at 50% 120%,rgba(214,186,140,.35) 0%,rgba(246,239,225,0) 60%),
+    var(--g-bg);
+  cursor:pointer;overflow:hidden;
+  transition:opacity 1.15s cubic-bezier(.22,.6,.14,1);
+}
+#gate.fade-out{opacity:0;pointer-events:none;}
+#gate.hidden{display:none;}
+.gate-panel{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:24px;padding:26px;text-align:center;
+  opacity:0;transform:scale(.96) translateY(8px);pointer-events:none;
+  transition:opacity .7s cubic-bezier(.22,.68,.32,1),transform .7s cubic-bezier(.22,.68,.32,1);
+}
+.gate-panel.active{opacity:1;transform:scale(1) translateY(0);pointer-events:auto;}
+.gate-panel.leaving{opacity:0;transform:scale(1.03) translateY(-8px);}
+
+.gate-closed{gap:clamp(18px,3.4vh,30px);padding-bottom:calc(26px + clamp(70px,16vh,150px));}
+.gate-skyline{
+  position:absolute;left:0;right:0;bottom:0;height:clamp(90px,20vh,170px);
+  width:100%;color:var(--g-gold);opacity:.42;pointer-events:none;
+}
+.gate-sprig{position:absolute;width:clamp(110px,26vw,180px);color:var(--g-olive);opacity:.75;pointer-events:none;}
+.gate-sprig.tl{top:-6px;left:-10px;}
+.gate-sprig.br{top:-6px;right:-10px;transform:scaleX(-1);}
+.gate-head{display:grid;gap:8px;justify-items:center;}
+.gate-eyebrow{font-size:.68rem;letter-spacing:.34em;text-transform:uppercase;color:var(--g-olive);font-weight:500;}
+.gate-names{
+  font-family:var(--font-display);font-size:clamp(2.2rem,10.5vw,3.6rem);line-height:1.2;color:var(--g-ink);
+}
+.gate-names .gate-amp{font-size:.86em;}
+.gate-sub{font-family:"Cormorant Garamond",var(--font-display);font-size:clamp(1rem,4vw,1.2rem);letter-spacing:.2em;color:var(--g-soft);}
+.gate-ornament{display:flex;align-items:center;gap:10px;width:160px;color:var(--g-gold);}
+.gate-ornament::before,.gate-ornament::after{content:"";flex:1;height:1px;background:linear-gradient(to right,transparent,currentColor,transparent);}
+.gate-ornament i{width:6px;height:6px;transform:rotate(45deg);border:1px solid currentColor;}
+
+/* The envelope */
+.envelope{
+  position:relative;width:min(80vw,360px,calc((100svh - 330px)*1.5));aspect-ratio:1.5;
+  perspective:1100px;filter:drop-shadow(0 22px 30px rgba(74,56,30,.22));
+}
+.env-back,.env-front,.env-flap,.env-letter{position:absolute;}
+.env-back{inset:0;border-radius:6px;background:linear-gradient(180deg,#E6D6B8,#EDE0C6);}
+.env-letter{
+  left:7%;right:7%;top:7%;bottom:7%;border-radius:4px;z-index:1;
+  background:linear-gradient(180deg,#FFFDF7,#FAF3E4);
+  display:grid;place-items:center;align-content:center;gap:6px;padding:6% 9%;
+  font-family:var(--font-display);font-size:clamp(1rem,4.6vw,1.22rem);line-height:1.5;color:var(--g-ink);
+  box-shadow:0 1px 0 rgba(0,0,0,.04);
+}
+.env-letter small{display:block;font-family:var(--font-script);font-size:1.25em;color:var(--g-gold);line-height:1;}
+/* The letter slides all the way out from behind the front panel, and only
+   then comes forward over the envelope — so the whole message is readable
+   instead of half of it staying tucked inside. */
+@keyframes letterOut{
+  0%  {transform:translateY(0) scale(1);z-index:1;box-shadow:0 1px 0 rgba(0,0,0,.04);}
+  48% {transform:translateY(-100%) scale(1);z-index:1;}
+  49% {z-index:5;}
+  100%{transform:translateY(-42%) scale(1.1);z-index:5;box-shadow:0 26px 50px -20px rgba(74,56,30,.45);}
+}
+.env-front{
+  inset:0;z-index:2;border-radius:6px;
+  background:linear-gradient(165deg,#F4EBD8 0%,#EBDDC2 100%);
+  clip-path:polygon(0 0,50% 56%,100% 0,100% 100%,0 100%);
+}
+.env-front::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(to top right,transparent 49.6%,rgba(120,92,52,.16) 50%,transparent 50.4%),
+             linear-gradient(to top left,transparent 49.6%,rgba(120,92,52,.16) 50%,transparent 50.4%);
+}
+.env-flap{
+  left:0;right:0;top:0;height:58%;z-index:3;
+  background:linear-gradient(180deg,#E9DABD,#E0CCA8);
+  clip-path:polygon(0 0,100% 0,50% 100%);
+  transform-origin:50% 0;
+  transition:transform .8s cubic-bezier(.5,0,.3,1) .15s,z-index 0s linear .55s;
+}
+.env-seal{
+  position:absolute;left:50%;top:56%;z-index:4;width:clamp(58px,17vw,74px);aspect-ratio:1;
+  transform:translate(-50%,-50%);border-radius:50%;
+  display:grid;place-items:center;
+  background:radial-gradient(circle at 34% 30%,#F1D58F 0%,#C99E52 42%,#9E7535 78%,#7E5B26 100%);
+  box-shadow:inset 0 0 0 3px rgba(255,236,190,.18),inset 0 -4px 8px rgba(80,52,16,.35),0 6px 14px -4px rgba(80,52,16,.5);
+  color:#6E4E1C;font-family:var(--font-display);font-size:clamp(.95rem,4.4vw,1.2rem);
+  text-shadow:0 1px 0 rgba(255,236,190,.55);
+  transition:transform .5s cubic-bezier(.5,-.3,.6,1),opacity .45s ease;
+}
+.env-seal::before{
+  content:"";position:absolute;inset:7px;border-radius:50%;border:1px dashed rgba(110,78,28,.45);
+}
+.gate-closed.opening .env-seal{transform:translate(-50%,-50%) scale(1.25) rotate(-12deg);opacity:0;}
+.gate-closed.opening .env-flap{transform:rotateX(180deg);z-index:0;}
+.gate-closed.opening .env-letter{animation:letterOut 1.9s cubic-bezier(.45,.05,.25,1) .5s forwards;}
+.gate-head,.gate-sprig{transition:opacity .6s ease,transform .6s ease;}
+.gate-closed.opening .gate-head{opacity:0;transform:translateY(-12px);transition-delay:.6s;}
+.gate-closed.opening .gate-tap{opacity:0;animation:none;}
+
+.gate-tap{
+  font-family:var(--font-body);font-size:.95rem;letter-spacing:.06em;color:var(--g-soft);
+  animation:tapPulse 2.4s ease-in-out infinite;transition:opacity .3s ease;
+}
+@keyframes tapPulse{0%,100%{opacity:.6;}50%{opacity:1;}}
+.gate-monogram{
+  display:flex;flex-wrap:wrap;align-items:baseline;justify-content:center;gap:.22em;
+  font-family:var(--font-display);font-size:clamp(2.3rem,11.5vw,4.1rem);
+  color:var(--g-ink);max-width:90vw;line-height:1.3;
+}
+.gate-amp{font-family:var(--font-script);font-size:.9em;color:var(--g-gold);padding:0 .06em;}
+.gate-place{font-family:"Cormorant Garamond",serif;letter-spacing:.3em;color:var(--g-soft);font-size:1rem;text-transform:uppercase;}
+.gate-portrait img{
+  max-width:min(78vw,330px);max-height:74vh;width:auto;height:auto;
+  border-radius:14px;box-shadow:0 26px 60px -22px rgba(52,40,24,.5);
+  transition:transform 1.15s cubic-bezier(.22,.6,.14,1);
+}
+.gate-panel.settle .gate-portrait img,.gate-portrait.settle img{transform:scale(1.06);}
+@media (prefers-reduced-motion:reduce){
+  .gate-tap{animation:none;opacity:.9;}
+  #gate,.gate-panel{transition-duration:.3s;}
+  .env-flap,.env-seal{transition-duration:.25s;transition-delay:0s;}
+  .gate-closed.opening .env-letter{animation-duration:.5s;animation-delay:0s;}
+  .gate-portrait img{transition-duration:.35s;}
+  .gate-portrait.settle img{transform:none;}
+}
+
+/* ============================================================
+   SOUND
+   ============================================================ */
+.music-btn{
+  position:fixed;z-index:60;
+  top:calc(14px + env(safe-area-inset-top,0px));right:14px;
+  width:44px;height:44px;border-radius:50%;
+  display:grid;place-items:center;
+  border:1px solid var(--line);background:var(--surface);color:var(--ink);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  box-shadow:var(--shadow);
+  opacity:0;pointer-events:none;
+  transition:opacity .6s ease,transform .3s cubic-bezier(.34,1.56,.64,1),
+             background-color .5s linear,color .5s linear,border-color .5s linear;
+}
+body.opened .music-btn{opacity:1;pointer-events:auto;}
+body.opened .music-btn.dim{opacity:.38;}
+.music-btn:active{transform:scale(.9);}
+.music-btn svg{width:20px;height:20px;}
+.music-btn .icon-off{display:none;}
+.music-btn.is-off .icon-on{display:none;}
+.music-btn.is-off .icon-off{display:block;}
+@media (prefers-reduced-motion:reduce){ .music-btn{transition:opacity .2s ease;} body.opened .music-btn.dim{opacity:1;} }
+
+/* ============================================================
+   HERO — Rabati wakes up: clouds part, mist drifts over the hills,
+   birds pass, the fortress rises; at night its windows light up
+   and the stone glows gold the way the real castle is floodlit.
+   ============================================================ */
+.hero{
+  position:relative;min-height:100svh;
+  display:grid;place-items:center;padding:24px;
+  overflow:hidden;isolation:isolate;
+}
+.hero-parallax{position:absolute;inset:0;will-change:transform,opacity;}
+
+.cloud{
+  position:absolute;width:clamp(150px,24vw,270px);height:clamp(62px,10vw,110px);
+  filter:drop-shadow(0 24px 28px rgba(54,40,15,.08));opacity:.96;
+}
+.cloud-part{
+  position:absolute;border-radius:50%;
+  background:radial-gradient(circle at 35% 35%,rgba(255,255,255,.98),rgba(250,246,240,.92) 55%,rgba(232,222,206,.70) 74%,rgba(232,222,206,.06) 100%);
+}
+.cloud-part.p1{width:52%;height:72%;left:4%;bottom:0;}
+.cloud-part.p2{width:42%;height:78%;left:25%;top:8%;}
+.cloud-part.p3{width:44%;height:68%;right:6%;bottom:3%;}
+.cloud-mist{position:absolute;left:10%;right:10%;bottom:6%;height:24%;border-radius:999px;
+  background:linear-gradient(to bottom,rgba(250,246,240,.92),rgba(236,228,214,.62));filter:blur(8px);}
+.cloud{opacity:calc(.96 - .55*var(--night));}
+.cloud-1{top:13%;left:-6%;}
+.cloud-2{top:22%;right:-4%;width:clamp(180px,28vw,300px);}
+.cloud-3{top:40%;left:-8%;width:clamp(170px,27vw,290px);}
+.cloud-4{top:50%;right:-3%;width:clamp(150px,24vw,240px);}
+body.opened .cloud-1{animation:cloudOpenL 2.8s cubic-bezier(.2,.8,.16,1) forwards,cloudDriftR 30s linear 2.8s infinite;}
+body.opened .cloud-2{animation:cloudOpenR 3.1s cubic-bezier(.2,.8,.16,1) forwards,cloudDriftL 34s linear 3.1s infinite;}
+body.opened .cloud-3{animation:cloudOpenLFar 3.4s cubic-bezier(.2,.8,.16,1) forwards,cloudDriftR 26s linear 3.4s infinite;}
+body.opened .cloud-4{animation:cloudOpenRFar 3.8s cubic-bezier(.2,.8,.16,1) forwards,cloudDriftL 28s linear 3.8s infinite;}
+@keyframes cloudOpenL{0%{transform:translate3d(20vw,0,0) scale(1.26);filter:blur(12px);}100%{transform:none;filter:blur(0);}}
+@keyframes cloudOpenR{0%{transform:translate3d(-20vw,0,0) scale(1.28);filter:blur(12px);}100%{transform:scale(1.05);filter:blur(0);}}
+@keyframes cloudOpenLFar{0%{transform:translate3d(24vw,-2vh,0) scale(1.34);filter:blur(14px);}100%{transform:none;filter:blur(0);}}
+@keyframes cloudOpenRFar{0%{transform:translate3d(-24vw,-2vh,0) scale(1.30);filter:blur(14px);}100%{transform:none;filter:blur(0);}}
+@keyframes cloudDriftR{0%{transform:translateX(0);}100%{transform:translateX(138vw);}}
+@keyframes cloudDriftL{0%{transform:translateX(0);}100%{transform:translateX(-140vw);}}
+
+.birds{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
+.birds svg{position:absolute;top:21%;left:-20%;width:min(36vw,230px);opacity:.5;
+  color:rgba(46,36,24,.5);animation:birdsFly 22s linear infinite;}
+.birds svg:nth-child(2){top:33%;width:min(24vw,160px);animation-duration:27s;animation-delay:-7s;opacity:.42;}
+@keyframes birdsFly{
+  0%{transform:translateX(0) translateY(0) scale(.95);}
+  50%{transform:translateX(60vw) translateY(-10px) scale(1);}
+  100%{transform:translateX(142vw) translateY(6px) scale(.98);}
+}
+
+/* Rabati — hills, the fortress, the old town. */
+.rabati-scene{
+  position:absolute;left:0;right:0;bottom:0;height:var(--scene-h);pointer-events:none;
+  opacity:0;transform:translateY(18px);
+  transition:opacity 1.3s ease .9s,transform 1.6s cubic-bezier(.2,.8,.2,1) .9s;
+}
+body.opened .rabati-scene{opacity:1;transform:none;}
+.rabati-scene > svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;}
+.rb-far{fill:#8F7D66;opacity:calc(.34 - .1*var(--night));}
+.rb-mid{fill:#6F5D47;opacity:.62;}
+.rb-glow{opacity:calc(var(--night)*.85);}
+.rb-castle{fill:#5C4836;}
+.rb-dome{fill:url(#domeGold);}
+.rb-sheen{fill:url(#domeSheen);opacity:calc(1 - var(--night)*.8);}
+.rb-slits{fill:#2C221A;opacity:.75;}
+.rb-lit{fill:#FFD08A;opacity:var(--night);filter:drop-shadow(0 0 3px rgba(255,196,110,.9));}
+.rb-town{fill:#46362A;}
+.rb-front{fill:#3B2E24;}
+.rb-flag{transform-box:fill-box;transform-origin:0 50%;animation:flagWave 2.2s ease-in-out infinite alternate;}
+@keyframes flagWave{0%{transform:skewY(-5deg) scaleX(.92);}100%{transform:skewY(4deg) scaleX(1);}}
+
+/* Autumn mist rolling along the valley */
+.mist{position:absolute;left:-30%;width:90%;height:clamp(40px,8vw,80px);border-radius:999px;
+  background:radial-gradient(ellipse at center,rgba(255,250,240,.78),rgba(255,250,240,0) 70%);
+  filter:blur(6px);opacity:calc(.9 - .6*var(--night));pointer-events:none;}
+.mist-1{bottom:calc(var(--scene-h)*.34);animation:mistDrift 46s linear infinite;}
+.mist-2{bottom:calc(var(--scene-h)*.18);width:70%;animation:mistDrift 60s linear -24s infinite;}
+@keyframes mistDrift{from{transform:translateX(0);}to{transform:translateX(160vw);}}
+
+.hero-content{
+  position:relative;z-index:3;width:min(100%,720px);text-align:center;
+  padding:14vh 0 calc(var(--scene-h) + 4vh);
+  opacity:0;transform:translateY(26px) scale(.985);
+  transition:opacity 1.2s ease 1.8s,transform 1.2s ease 1.8s;
+}
+body.opened .hero-content{opacity:1;transform:none;}
+.hero-eyebrow{
+  display:inline-block;margin-bottom:20px;
+  font-size:clamp(.62rem,2.6vw,.76rem);letter-spacing:.32em;text-transform:uppercase;
+  color:var(--ink-soft);
+}
+.hero-title{
+  font-family:var(--font-display);font-weight:400;
+  font-size:clamp(2.5rem,10.5vw,5.1rem);line-height:1.22;letter-spacing:.005em;
+  color:var(--ink);
+  text-shadow:0 12px 34px rgba(52,40,24,.14);
+}
+.hero-title .amp{font-family:var(--font-script);color:var(--gold);font-size:.86em;margin:0 .14em;display:inline-block;transform:translateY(-.02em);}
+.hero-date{
+  margin-top:18px;font-size:clamp(.82rem,3.2vw,1rem);letter-spacing:.26em;
+  text-transform:uppercase;color:var(--ink-soft);
+}
+.hero-actions{margin-top:30px;display:flex;justify-content:center;}
+.scroll-indicator{
+  position:absolute;left:50%;bottom:22px;transform:translateX(-50%);z-index:3;
+  display:grid;justify-items:center;gap:10px;color:#F6EEDC;opacity:0;
+}
+body.opened .scroll-indicator{animation:indicatorIn 1.2s ease 2.6s both;}
+.scroll-line{width:1px;height:46px;transform-origin:top;
+  background:linear-gradient(to bottom,transparent,currentColor,transparent);
+  animation:scrollLine 2.5s ease-in-out infinite;}
+.scroll-text{font-size:.62rem;letter-spacing:.38em;text-transform:uppercase;}
+@keyframes indicatorIn{0%{opacity:0;transform:translateX(-50%) translateY(12px);}100%{opacity:1;transform:translateX(-50%);}}
+@keyframes scrollLine{0%,100%{transform:scaleY(.5);opacity:.45;}50%{transform:scaleY(1);opacity:1;}}
+
+/* ============================================================
+   CONTENT
+   ============================================================ */
+.content{width:min(100%,560px);margin:0 auto;padding:0 20px;}
+
+.invite-copy{color:var(--ink-soft);font-size:clamp(.96rem,3.6vw,1.04rem);line-height:1.95;text-align:center;}
+.invite-copy + .invite-copy{margin-top:16px;}
+.invite-photo{
+  position:relative;width:min(72vw,280px);margin:34px auto 0;padding:10px 10px 12px;
+  background:#FFFDF7;border-radius:4px;transform:rotate(2.2deg);
+  box-shadow:0 22px 44px -22px rgba(40,30,16,.55);
+}
+.invite-photo::before{ /* washi tape */
+  content:"";position:absolute;left:50%;top:-12px;width:86px;height:24px;transform:translateX(-50%) rotate(-3deg);
+  background:rgba(222,206,170,.75);box-shadow:0 1px 2px rgba(0,0,0,.06);
+}
+.invite-photo img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:2px;
+  filter:brightness(calc(1 - .25*var(--night)));}
+.invite-sign{display:block;margin-top:26px;font-family:var(--font-display);font-size:1.25rem;color:var(--rose);text-align:center;}
+
+/* Countdown */
+.countdown-wrap{display:flex;justify-content:center;flex-wrap:wrap;gap:clamp(10px,3vw,20px);}
+.count-tile{
+  width:clamp(70px,20vw,100px);padding:18px 0;text-align:center;
+  border-radius:var(--radius);border:1px solid var(--line);
+  background:var(--surface);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  box-shadow:var(--shadow);
+}
+.count-num{font-family:var(--font-display);font-size:clamp(1.6rem,6vw,2.3rem);color:var(--accent);font-variant-numeric:tabular-nums;line-height:1.1;}
+.count-label{margin-top:4px;font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-faint);}
+
+/* Detail cards: one panel, four cells split by hairlines */
+.info-grid{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;
+  border-radius:var(--radius);overflow:hidden;border:1px solid var(--line);
+  background:var(--line);box-shadow:var(--shadow);
+}
+.card{
+  padding:24px 14px 22px;display:grid;justify-items:center;align-content:start;gap:6px;text-align:center;
+  background:var(--surface);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+}
+.card-icon{
+  width:42px;height:42px;margin-bottom:6px;border-radius:50%;display:grid;place-items:center;
+  color:var(--gold);border:1px solid color-mix(in srgb,var(--gold) 45%,transparent);
+  background:color-mix(in srgb,var(--gold) 9%,transparent);
+}
+.card-icon svg{width:20px;height:20px;}
+.card-label{font-size:.78rem;letter-spacing:.06em;color:var(--ink-soft);}
+.info-value{font-size:clamp(1.12rem,4.6vw,1.3rem);font-weight:600;line-height:1.3;color:var(--ink);font-variant-numeric:tabular-nums;}
+.info-sub{font-size:.8rem;color:var(--ink-soft);line-height:1.4;}
+
+/* Names */
+.names-section{text-align:center;}
+.display-names{font-family:var(--font-display);font-size:clamp(2.3rem,10.5vw,3.8rem);line-height:1.25;}
+.display-names .amp{font-family:var(--font-script);color:var(--gold);margin:0 .14em;display:inline-block;}
+.names-place{margin-top:10px;color:var(--ink-soft);font-family:var(--font-display);}
+
+/* Gallery — a swipeable deck of prints on phones, a grid on desktop. */
+.gallery-stage{position:relative;width:min(76vw,300px);aspect-ratio:3/4;margin:0 auto;touch-action:pan-y;}
+.g-card{
+  position:absolute;inset:0;border-radius:var(--radius-sm);overflow:hidden;
+  background:var(--surface);border:1px solid var(--line);padding:8px;
+  box-shadow:0 18px 40px -20px rgba(40,30,16,.5);
+  transform-origin:50% 62%;will-change:transform;cursor:grab;
+}
+.g-card img{width:100%;height:100%;object-fit:cover;border-radius:5px;-webkit-user-drag:none;user-select:none;pointer-events:none;}
+.gallery-hint{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  margin-top:20px;font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-faint);
+}
+.gallery-dots{display:flex;justify-content:center;gap:7px;margin-top:16px;}
+.gallery-dots i{width:6px;height:6px;border-radius:50%;background:var(--line);transition:background-color .3s ease,transform .3s ease;}
+.gallery-dots i.on{background:var(--accent);transform:scale(1.35);}
+@media (min-width:760px){
+  .gallery-stage{display:none;}
+  .gallery-hint,.gallery-dots{display:none;}
+  .gallery-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+  .gallery-grid .g-item{aspect-ratio:3/4;border-radius:var(--radius-sm);overflow:hidden;border:1px solid var(--line);}
+  .gallery-grid .g-item.wide{grid-column:span 2;aspect-ratio:auto;}
+  .gallery-grid .g-item img{width:100%;height:100%;object-fit:cover;transition:transform .5s cubic-bezier(.2,.7,.3,1);}
+  .gallery-grid .g-item:hover img{transform:scale(1.06);}
+}
+@media (max-width:759px){ .gallery-grid{display:none;} }
+
+/* Timeline */
+.timeline{position:relative;padding-left:30px;}
+.timeline::before{content:"";position:absolute;left:9px;top:8px;bottom:8px;width:2px;
+  background:linear-gradient(to bottom,transparent,var(--gold),transparent);opacity:.75;}
+.t-item{position:relative;padding:0 0 26px 18px;opacity:0;transform:translateX(22px);
+  transition:opacity .72s ease,transform .72s ease;}
+.t-item.is-visible{opacity:1;transform:none;}
+.t-dot{position:absolute;left:-25px;top:9px;width:13px;height:13px;border-radius:50%;
+  background:var(--accent);box-shadow:0 0 0 3px var(--bg),0 0 16px color-mix(in srgb,var(--accent) 65%,transparent);}
+.t-time{font-size:.7rem;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;font-weight:500;}
+.t-title{font-family:var(--font-display);font-size:clamp(1.35rem,5.6vw,1.75rem);line-height:1.32;}
+.t-place{margin-top:4px;color:var(--accent);font-size:.95rem;font-weight:500;}
+.t-desc{margin-top:6px;color:var(--ink-soft);font-size:.92rem;line-height:1.75;}
+
+/* Location */
+.loc-cards{display:flex;flex-direction:column;gap:24px;}
+.loc-card{
+  border-radius:var(--radius);overflow:hidden;border:1px solid var(--line);
+  background:var(--surface);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:var(--shadow);
+}
+.loc-art{position:relative;width:100%;aspect-ratio:4/3;background:var(--surface-2);overflow:hidden;}
+.loc-art img{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  filter:brightness(calc(1 - .42*var(--night))) saturate(calc(1 - .25*var(--night)));
+}
+/* Until the venue photograph arrives, the frame shows a line sketch
+   of Rabati instead of an empty box. Dropping an <img> in replaces it. */
+.loc-art.pending{
+  display:grid;place-items:center;
+  background:
+    radial-gradient(ellipse at 50% 30%,color-mix(in srgb,var(--gold) 14%,transparent),transparent 70%),
+    var(--surface-2);
+}
+.loc-art.pending svg.sketch{position:absolute;left:0;right:0;bottom:0;width:100%;height:62%;color:var(--gold);opacity:.55;}
+.loc-art.pending .loc-icon{
+  position:relative;width:56px;height:56px;border-radius:50%;display:grid;place-items:center;margin-top:-18%;
+  color:var(--gold);border:1px solid color-mix(in srgb,var(--gold) 50%,transparent);
+  background:color-mix(in srgb,var(--bg) 70%,transparent);
+}
+.loc-art.pending .loc-icon svg{width:26px;height:26px;}
+.loc-maplink{position:absolute;inset:0;z-index:2;display:flex;align-items:flex-end;justify-content:flex-end;padding:12px;text-decoration:none;}
+.loc-badge{
+  font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:#fff;
+  background:rgba(40,30,20,.58);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  padding:8px 15px;border-radius:999px;white-space:nowrap;transition:background-color .2s ease;
+}
+.loc-maplink:hover .loc-badge,.loc-maplink:active .loc-badge{background:var(--accent);}
+.loc-info{padding:20px 22px 24px;border-top:1px solid var(--line);text-align:center;}
+.loc-label{font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+.loc-time{font-size:1.35rem;font-weight:500;color:var(--gold);font-variant-numeric:tabular-nums;letter-spacing:.04em;}
+.loc-name{font-size:1.15rem;font-weight:600;line-height:1.4;margin-top:4px;}
+.loc-address{margin-top:4px;color:var(--ink-soft);font-size:.95rem;line-height:1.5;}
+
+/* RSVP */
+.rsvp-card{
+  position:relative;isolation:isolate;padding:26px 20px 22px;
+  border-radius:var(--radius);border:1px solid var(--line);background:var(--surface);
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:var(--shadow);overflow:hidden;
+}
+.rsvp-card::before{
+  content:"";position:absolute;inset:-20%;z-index:-1;pointer-events:none;
+  background:radial-gradient(circle,color-mix(in srgb,var(--gold) 16%,transparent) 0%,transparent 62%);
+  animation:glowPulse 6s ease-in-out infinite;
+}
+@keyframes glowPulse{0%,100%{opacity:.35;transform:scale(1);}50%{opacity:.75;transform:scale(1.08);}}
+.rsvp-form{display:grid;gap:16px;margin-top:18px;}
+.field{display:grid;gap:9px;}
+.input-label{font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-faint);}
+.text-input{
+  width:100%;min-height:52px;padding:13px 16px;border-radius:14px;
+  border:1px solid var(--line);background:color-mix(in srgb,var(--bg) 60%,transparent);
+  outline:none;transition:border-color .25s ease,box-shadow .25s ease;
+}
+.text-input::placeholder{color:var(--ink-faint);}
+.text-input:focus{border-color:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 14%,transparent);}
+textarea.text-input{min-height:88px;resize:vertical;line-height:1.7;}
+.field.invalid .text-input,.field.invalid .attend-button{border-color:#D9737F;box-shadow:0 0 0 4px rgba(217,115,127,.12);}
+.counter-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:4px 0;flex-wrap:wrap;}
+.counter-row .input-label{flex:1 1 auto;min-width:120px;}
+.counter-controls{display:flex;align-items:center;gap:10px;}
+.counter-btn{
+  width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-size:1.2rem;
+  border:1px solid var(--line);background:color-mix(in srgb,var(--bg) 55%,transparent);
+  transition:transform .25s ease,border-color .25s ease;
+}
+.counter-btn:hover{transform:translateY(-2px);border-color:var(--accent);}
+.guest-number{min-width:56px;text-align:center;font-family:var(--font-display);font-size:clamp(1.8rem,7vw,2.4rem);line-height:1;}
+.attendance-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}
+.attend-button{
+  min-height:52px;border-radius:14px;font-size:.92rem;letter-spacing:.04em;
+  border:1px solid var(--line);background:color-mix(in srgb,var(--bg) 55%,transparent);
+  transition:transform .25s ease,border-color .25s ease,background-color .25s ease;
+}
+.attend-button:hover{transform:translateY(-2px);}
+.attend-button.active-yes{background:rgba(110,140,70,.18);border-color:rgba(110,140,70,.6);}
+.attend-button.active-no{background:rgba(196,110,124,.14);border-color:rgba(196,110,124,.45);}
+.guests-field{transition:opacity .3s ease;}
+.guests-field.muted{opacity:.4;pointer-events:none;}
+.submit-button{
+  position:relative;overflow:hidden;min-height:54px;padding:14px 22px;border-radius:14px;border:0;
+  background:var(--accent);color:var(--bg);
+  letter-spacing:.26em;text-transform:uppercase;font-size:.74rem;
+  box-shadow:0 16px 36px -18px color-mix(in srgb,var(--accent) 95%,transparent);
+  transition:transform .25s ease,box-shadow .25s ease,background-color .5s linear,opacity .2s ease;
+}
+.submit-button:hover{transform:translateY(-2px);}
+.submit-button:disabled{opacity:.6;cursor:progress;transform:none;}
+.submit-button::before{
+  content:"";position:absolute;inset:0;transform:translateX(-135%);
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.4),transparent);
+  transition:transform .8s ease;
+}
+.submit-button:hover::before{transform:translateX(135%);}
+.form-note{font-size:.72rem;color:var(--ink-faint);text-align:center;letter-spacing:.04em;}
+.form-error{display:none;font-size:.82rem;color:#C2505F;text-align:center;line-height:1.5;}
+.form-error.show{display:block;}
+.success-message{display:none;text-align:center;padding:14px 4px 6px;}
+.success-message.show{display:block;}
+.success-icon{
+  display:inline-grid;place-items:center;width:78px;height:78px;margin:0 auto 16px;border-radius:50%;
+  background:radial-gradient(circle,color-mix(in srgb,var(--gold) 22%,transparent),transparent 70%);
+  font-size:1.9rem;transform:scale(0);
+}
+.success-message.show .success-icon{animation:iconPop .85s cubic-bezier(.18,1.35,.42,1) forwards;}
+@keyframes iconPop{0%{transform:scale(0);}60%{transform:scale(1.12);}100%{transform:scale(1);}}
+.success-title{font-family:var(--font-display);font-size:clamp(1.95rem,8vw,2.65rem);line-height:1.3;margin-bottom:8px;}
+.success-copy{color:var(--ink-soft);line-height:1.85;}
+.link-button{margin-top:18px;background:none;border:0;padding:6px 4px;color:var(--accent);font-size:.8rem;letter-spacing:.06em;text-decoration:underline;text-underline-offset:4px;}
+
+/* Falling leaves and petals on a confirmed RSVP — it is October. */
+.petal-layer{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:30;}
+.petal{position:fixed;top:-40px;width:15px;height:21px;border-radius:70% 30% 65% 35%;opacity:.92;
+  animation:petalFall linear forwards;}
+.petal.leaf{border-radius:0 80% 0 80%;width:16px;height:16px;}
+@keyframes petalFall{0%{transform:translate3d(0,-8vh,0) rotate(0deg);}100%{transform:translate3d(var(--drift,40px),112vh,0) rotate(720deg);}}
+
+/* Footer */
+.footer{text-align:center;padding:30px 0 40px;color:var(--ink-soft);}
+.footer-script{font-family:var(--font-script);font-size:clamp(2.2rem,10vw,3rem);margin-bottom:8px;color:var(--ink);}
+.footer-date{font-size:.66rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;}
+.footer-note{font-size:.62rem;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-faint);}
+.footer-castle{width:min(100%,440px);margin:0 auto 22px;overflow:visible;
+  -webkit-mask-image:linear-gradient(to bottom,#000 78%,transparent);mask-image:linear-gradient(to bottom,#000 78%,transparent);}
+/* Floodlit stone: warmer and lighter than the daytime silhouette. */
+.rb-castle.night{fill:#7A5E43;}
+
+@media (min-width:560px){ .content{width:min(100%,600px);} }
+
+/* ============================================================
+   PHONES — the invitation is opened almost only from Messenger,
+   Viber and Instagram, so the narrow screen is the main layout.
+   ============================================================ */
+html{-webkit-tap-highlight-color:transparent;}
+.footer{padding-bottom:calc(40px + env(safe-area-inset-bottom,0px));}
+@media (max-width:480px){
+  section{padding:54px 0;}
+  .section-head{margin-bottom:28px;}
+  .content{padding:0 16px;}
+  .hero{padding:16px;}
+  .hero-content{padding-top:max(11vh,64px);}
+  .hero-actions .btn{width:min(100%,300px);}
+  .invite-copy{font-size:1rem;line-height:1.9;}
+  .card{padding:20px 10px 18px;}
+  .rsvp-card{padding:22px 16px 18px;}
+  .loc-cards{gap:18px;}
+  .loc-info{padding:16px 16px 20px;}
+  .loc-badge{padding:9px 16px;font-size:.7rem;}
+  .timeline{padding-left:26px;}
+  .t-item{padding-left:14px;}
+  .attend-button{font-size:.95rem;}
+}
+@media (max-width:360px){
+  .count-tile{width:64px;padding:14px 0;}
+  .info-value{font-size:1.02rem;}
+}
+/* Short phones (iPhone SE / mini): keep the whole opening card on screen. */
+@media (max-height:700px){
+  .gate-closed{gap:12px;padding-bottom:calc(16px + clamp(60px,13vh,110px));}
+  .gate-names{font-size:clamp(1.9rem,9vw,2.8rem);}
+  .gate-sprig{width:clamp(90px,22vw,140px);}
+  .gate-skyline{height:clamp(70px,15vh,120px);}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;}
+  .hero-content,.rabati-scene{opacity:1 !important;transform:none !important;transition:none !important;}
+  .sun{opacity:1 !important;transform:none !important;}
+}
+</style>
+</head>
+<body>
+
+<!-- Shared Rabati geometry (generated by tools/rabati_svg.py) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+<defs>
+  <linearGradient id="domeGold" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#F6DF9C"/><stop offset=".45" stop-color="#D2A54C"/><stop offset="1" stop-color="#8C672B"/>
+  </linearGradient>
+  <linearGradient id="domeSheen" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#fff" stop-opacity="0"/>
+    <stop offset=".5" stop-color="#fff" stop-opacity=".8"/>
+    <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    <animateTransform attributeName="gradientTransform" type="translate" values="-1.2 0;1.2 0;1.2 0" keyTimes="0;.32;1" dur="7s" repeatCount="indefinite"/>
+  </linearGradient>
+  <radialGradient id="castleGlow" cx=".5" cy=".55" r=".5">
+    <stop offset="0" stop-color="#FFC877" stop-opacity=".55"/>
+    <stop offset=".55" stop-color="#E8A04E" stop-opacity=".18"/>
+    <stop offset="1" stop-color="#E8A04E" stop-opacity="0"/>
+  </radialGradient>
+  <symbol id="sprig" viewBox="0 0 180 120">
+    <path d="M6 10C52 18 96 40 150 96" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+    <g fill="currentColor">
+      <ellipse cx="30" cy="8" rx="13" ry="4.5" transform="rotate(-18 30 8)"/>
+      <ellipse cx="34" cy="26" rx="13" ry="4.5" transform="rotate(38 34 26)"/>
+      <ellipse cx="62" cy="18" rx="14" ry="4.6" transform="rotate(-6 62 18)"/>
+      <ellipse cx="64" cy="40" rx="14" ry="4.6" transform="rotate(48 64 40)"/>
+      <ellipse cx="94" cy="36" rx="14" ry="4.6" transform="rotate(8 94 36)"/>
+      <ellipse cx="92" cy="60" rx="14" ry="4.6" transform="rotate(58 92 60)"/>
+      <ellipse cx="122" cy="60" rx="13" ry="4.4" transform="rotate(22 122 60)"/>
+      <ellipse cx="118" cy="82" rx="13" ry="4.4" transform="rotate(66 118 82)"/>
+    </g>
+    <g fill="#FFFDF5" stroke="currentColor" stroke-width=".8">
+      <circle cx="48" cy="30" r="3.4"/><circle cx="108" cy="50" r="3.4"/>
+    </g>
+  </symbol>
+<!-- RABATI:BEGIN -->
+<symbol id="rb-body" viewBox="0 0 1200 320"><path d="M200 296V238H207.0V247H214.2V238H221.2V247H228.3V238H235.3V247H242.5V238H249.5V247H256.7V238H263.7V247H270.8V238H277.8V247H285.0V238H292.0V296ZM280 296V213H288.0V222H294.0V213H302.0V222H308.0V213H316.0V222H322.0V213H330.0V222H336.0V213H344.0V222H350.0V213H358.0V222H364.0V213H372.0V222H378.0V213H386.0V222H392.0V213H400.0V222H406.0V213H414.0V222H420.0V213H428.0V222H434.0V213H442.0V222H448.0V213H456.0V222H462.0V213H470.0V222H476.0V213H484.0V222H490.0V213H498.0V222H504.0V213H512.0V222H518.0V213H526.0V222H532.0V213H540.0V222H546.0V213H554.0V222H560.0V213H568.0V222H574.0V213H582.0V222H588.0V213H596.0V222H602.0V213H610.0V222H616.0V213H624.0V222H630.0V213H638.0V222H644.0V213H652.0V222H658.0V213H666.0V222H672.0V213H680.0V222H686.0V213H694.0V222H700.0V213H708.0V222H714.0V213H722.0V222H728.0V213H736.0V222H742.0V213H750.0V222H756.0V213H764.0V222H770.0V213H778.0V222H784.0V213H792.0V222H798.0V213H806.0V222H812.0V213H820.0V222H826.0V213H834.0V222H840.0V213H848.0V222H854.0V213H862.0V222H868.0V213H876.0V222H882.0V213H890.0V222H896.0V213H904.0V222H910.0V213H918.0V222H924.0V213H932.0V222H938.0V213H946.0V222H952.0V213H960.0V296ZM292 296V166H299.0V175H305.0V166H312.0V175H318.0V166H325.0V175H331.0V166H338.0V296ZM382 190h76v106h-76ZM376 192L420 168L464 192ZM408 148h24v26h-24ZM404 150L420 120L436 150ZM419 103h2v18h-2ZM414 109h12v2h-12ZM520 108h64v188h-64ZM514 100h76v10h-76ZM514 101V90H522.0V100H531.0V90H539.0V100H548.0V90H556.0V100H565.0V90H573.0V100H582.0V90H590.0V101ZM584 172h92v124h-92ZM580 166h100v8h-100ZM680 176h106v120h-106ZM700 158h64v20h-64ZM800 98h14v198h-14ZM794 128h26v6h-26ZM796 100h22v4h-22ZM880 296V160H887.0V169H894.3V160H901.3V169H908.7V160H915.7V169H923.0V160H930.0V296ZM930 296V238H937.0V247H944.7V238H951.7V247H959.4V238H966.4V247H974.1V238H981.1V247H988.9V238H995.9V247H1003.6V238H1010.6V247H1018.3V238H1025.3V247H1033.0V238H1040.0V296Z"/></symbol>
+<symbol id="rb-dome" viewBox="0 0 1200 320"><path d="M696 160C698 116 766 116 768 160ZM798 100L807 64L816 100ZM731 100h2v18h-2Z"/></symbol>
+<symbol id="rb-windows" viewBox="0 0 1200 320"><path d="M536 128h6v14h-6ZM562 128h6v14h-6ZM549 170h6v16h-6ZM536 214h6v14h-6ZM562 214h6v14h-6ZM549 252h6v14h-6ZM312 194h5v12h-5ZM312 236h5v12h-5ZM418 156h4v10h-4ZM415 226V213.0a5.0 5.0 0 0 1 10 0V226ZM594 210V192.0a6.0 6.0 0 0 1 12 0V210ZM616 210V192.0a6.0 6.0 0 0 1 12 0V210ZM638 210V192.0a6.0 6.0 0 0 1 12 0V210ZM660 210V192.0a6.0 6.0 0 0 1 12 0V210ZM694 214V200.5a4.5 4.5 0 0 1 9 0V214ZM716 214V200.5a4.5 4.5 0 0 1 9 0V214ZM740 214V200.5a4.5 4.5 0 0 1 9 0V214ZM762 214V200.5a4.5 4.5 0 0 1 9 0V214ZM712 164h5v9h-5ZM729 164h5v9h-5ZM746 164h5v9h-5ZM805 150h4v10h-4ZM805 184h4v10h-4ZM902 186h5v12h-5ZM902 222h5v12h-5Z"/></symbol>
+<symbol id="rb-town" viewBox="0 0 1200 320"><path d="M30 320V270L53 256L76 270V320ZM70 320V278L90 264L110 278V320ZM112 320V266L139 252L166 266V320ZM160 320V276L182 262L204 276V320ZM1010 320V272L1035 258L1060 272V320ZM1056 320V280L1077 266L1098 280V320ZM1094 320V268L1122 254L1150 268V320ZM1146 320V276L1170 262L1194 276V320Z"/></symbol>
+<!-- RABATI:END -->
+</defs>
+</svg>
+
+<!-- ======================= OPENING GATE ======================= -->
+<div id="gate" role="button" tabindex="0" aria-label="შეეხეთ მოსაწვევის გასახსნელად">
+  <div class="gate-panel gate-closed active">
+    <svg class="gate-sprig tl" viewBox="0 0 180 120" aria-hidden="true"><use href="#sprig"/></svg>
+    <svg class="gate-sprig br" viewBox="0 0 180 120" aria-hidden="true"><use href="#sprig"/></svg>
+    <div class="gate-head">
+      <div class="gate-eyebrow">ჩვენი ქორწილი</div>
+      <div class="gate-names">გურამი <span class="gate-amp">&amp;</span> გულო</div>
+      <div class="gate-ornament" aria-hidden="true"><i></i></div>
+      <div class="gate-sub">ახალციხე · 24.10.2026</div>
+    </div>
+    <div class="envelope" aria-hidden="true">
+      <div class="env-back"></div>
+      <div class="env-letter"><span>მოუთმენლად გელით ჩვენი საუკეთესო დღისთვის!</span><small>გ &amp; გ</small></div>
+      <div class="env-front"></div>
+      <div class="env-flap"></div>
+      <div class="env-seal">გ&amp;გ</div>
+    </div>
+    <div class="gate-tap">შეეხეთ გასახსნელად</div>
+    <svg class="gate-skyline" viewBox="0 0 1200 320" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+      <path d="M0 262C120 246 220 250 300 246C380 242 420 226 520 222C640 218 760 220 860 232C960 244 1060 256 1200 250" fill="none" stroke="currentColor" stroke-width="1.4"/>
+      <use href="#rb-body" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+      <use href="#rb-dome" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+      <use href="#rb-town" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+    </svg>
+  </div>
+  <div class="gate-panel gate-initials">
+    <div class="gate-monogram"><span>გურამი</span><span class="gate-amp">&amp;</span><span>გულო</span></div>
+    <div class="gate-place">ახალციხე</div>
+  </div>
+  <div class="gate-panel gate-portrait">
+    <img src="assets/photos/4.jpg" alt="გურამი გულოს ხელს სთხოვს">
+  </div>
+</div>
+
+<!-- ======================= SKY ======================= -->
+<div class="skydome" aria-hidden="true">
+  <div class="sky-day"></div>
+  <div class="sky-dusk"></div>
+  <div class="sky-night"></div>
+</div>
+<canvas id="starfield" aria-hidden="true"></canvas>
+<div class="celestial" aria-hidden="true">
+  <div class="sun" id="sun"><div class="sun-core"><div class="sun-rays"></div></div></div>
+  <div class="moon" id="moon"></div>
+</div>
+
+<div class="page">
+
+  <!-- ======================= HERO ======================= -->
+  <header class="hero" id="hero">
+    <div class="hero-parallax" id="heroParallax" aria-hidden="true">
+
+      <div class="cloud cloud-1"><span class="cloud-part p1"></span><span class="cloud-part p2"></span><span class="cloud-part p3"></span><span class="cloud-mist"></span></div>
+      <div class="cloud cloud-2"><span class="cloud-part p1"></span><span class="cloud-part p2"></span><span class="cloud-part p3"></span><span class="cloud-mist"></span></div>
+      <div class="cloud cloud-3"><span class="cloud-part p1"></span><span class="cloud-part p2"></span><span class="cloud-part p3"></span><span class="cloud-mist"></span></div>
+      <div class="cloud cloud-4"><span class="cloud-part p1"></span><span class="cloud-part p2"></span><span class="cloud-part p3"></span><span class="cloud-mist"></span></div>
+
+      <div class="birds">
+        <svg viewBox="0 0 120 40" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0 10 Q10 0 20 10 Q30 0 40 10 Q30 5 20 15 Q10 5 0 10"/>
+          <path d="M48 24 Q58 14 68 24 Q78 14 88 24 Q78 19 68 29 Q58 19 48 24"/>
+          <path d="M84 14 Q94 4 104 14 Q114 4 124 14 Q114 9 104 19 Q94 9 84 14"/>
+        </svg>
+        <svg viewBox="0 0 120 40" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0 10 Q10 0 20 10 Q30 0 40 10 Q30 5 20 15 Q10 5 0 10"/>
+          <path d="M48 24 Q58 14 68 24 Q78 14 88 24 Q78 19 68 29 Q58 19 48 24"/>
+          <path d="M84 14 Q94 4 104 14 Q114 4 124 14 Q114 9 104 19 Q94 9 84 14"/>
+        </svg>
+      </div>
+
+      <div class="rabati-scene">
+        <svg viewBox="0 0 1200 320" preserveAspectRatio="xMidYMax slice" role="img" aria-label="რაბათის ციხე, ახალციხე">
+          <path class="rb-far" d="M0 196C80 170 140 150 220 162C300 174 340 128 430 134C520 140 560 176 640 160C720 144 780 112 870 126C960 140 1010 170 1090 158C1140 150 1170 160 1200 166V320H0Z"/>
+          <ellipse class="rb-glow" cx="610" cy="200" rx="460" ry="150" fill="url(#castleGlow)"/>
+          <path class="rb-mid" d="M0 262C120 246 220 250 300 246C380 242 420 226 520 222C640 218 760 220 860 232C960 244 1060 256 1200 250V320H0Z"/>
+          <use class="rb-castle" href="#rb-body"/>
+          <use class="rb-dome" href="#rb-dome"/>
+          <path class="rb-sheen" d="M696 160C698 116 766 116 768 160Z"/>
+          <use class="rb-slits" href="#rb-windows"/>
+          <use class="rb-lit" href="#rb-windows"/>
+          <!-- Georgian flag over the Jakeli keep -->
+          <rect x="551" y="56" width="2" height="36" fill="#3B2E24"/>
+          <g class="rb-flag">
+            <rect x="553" y="57" width="30" height="20" fill="#FBF8F1"/>
+            <rect x="566" y="57" width="4" height="20" fill="#D6262E"/>
+            <rect x="553" y="65" width="30" height="4" fill="#D6262E"/>
+          </g>
+          <use class="rb-town" href="#rb-town"/>
+          <path class="rb-front" d="M0 292C200 280 400 288 600 284C800 280 1000 290 1200 284V320H0Z"/>
+        </svg>
+        <div class="mist mist-1"></div>
+        <div class="mist mist-2"></div>
+      </div>
+    </div>
+
+    <div class="hero-content">
+      <div class="hero-eyebrow">გიწვევთ!</div>
+      <h1 class="hero-title">გურამი<span class="amp">&amp;</span>გულო</h1>
+      <div class="hero-date">24 ოქტომბერი, 2026 · ახალციხე</div>
+      <div class="hero-actions">
+        <a class="btn" href="#rsvp" id="heroCta">დაადასტურე დასწრება</a>
+      </div>
+    </div>
+
+    <div class="scroll-indicator" aria-hidden="true">
+      <div class="scroll-line"></div>
+      <div class="scroll-text">scroll</div>
+    </div>
+  </header>
+
+  <!-- ======================= MAIN ======================= -->
+  <main>
+    <div class="content">
+
+      <!-- Invitation -->
+      <section id="invitation">
+        <div class="section-head reveal">
+          <div class="eyebrow">Invitation</div>
+          <h2>ძვირფასო მეგობრებო!</h2>
+          <div class="divider"><span></span></div>
+        </div>
+        <div class="reveal">
+          <p class="invite-copy">იქ, სადაც რაბათის უძველესი კედლები საუკუნეების ისტორიას ინახავს და მესხეთის მთები შემოდგომისას ოქროსფრად ბრწყინავს, ჩვენი ცხოვრების ახალი თავი იწყება.</p>
+          <p class="invite-copy">სიხარულით გეპატიჟებით ჩვენს ქორწილში — გვინდა, ეს დღე ჩვენთვის ყველაზე ძვირფას ადამიანებთან ერთად გავატაროთ.</p>
+          <p class="invite-copy">მობრძანდით და გაგვიზიარეთ სითბო, მხიარულება და ის დიდი სიყვარული, რომელიც ერთმანეთთან გვაკავშირებს.</p>
+          <figure class="invite-photo">
+            <img src="assets/photos/4.jpg" alt="გურამი გულოს ხელს სთხოვს ტბის პირას" loading="lazy">
+          </figure>
+          <span class="invite-sign">გურამი &amp; გულო ♥</span>
+        </div>
+      </section>
+
+      <!-- Countdown -->
+      <section id="countdown">
+        <div class="section-head reveal">
+          <div class="eyebrow">დარჩენილია</div>
+          <div class="divider"><span></span></div>
+        </div>
+        <div class="countdown-wrap reveal">
+          <div class="count-tile"><div class="count-num" id="cd-d">--</div><div class="count-label">დღე</div></div>
+          <div class="count-tile"><div class="count-num" id="cd-h">--</div><div class="count-label">საათი</div></div>
+          <div class="count-tile"><div class="count-num" id="cd-m">--</div><div class="count-label">წუთი</div></div>
+          <div class="count-tile"><div class="count-num" id="cd-s">--</div><div class="count-label">წამი</div></div>
+        </div>
+      </section>
+
+      <!-- Details -->
+      <section id="details">
+        <div class="section-head reveal"><div class="eyebrow">დეტალები</div></div>
+        <div class="info-grid reveal">
+          <article class="card">
+            <div class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg></div>
+            <div class="card-label">თარიღი</div>
+            <div class="info-value">24 ოქტომბერი</div>
+            <div class="info-sub">შაბათი, 2026</div>
+          </article>
+          <article class="card">
+            <div class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.4"/></svg></div>
+            <div class="card-label">ადგილი</div>
+            <div class="info-value">ახალციხე</div>
+            <div class="info-sub">სამცხე-ჯავახეთი</div>
+          </article>
+          <article class="card">
+            <div class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5v5M9.5 5h5"/><path d="M6 21V12l6-4.5 6 4.5v9"/><path d="M10 21v-4.5a2 2 0 0 1 4 0V21M4 21h16"/></svg></div>
+            <div class="card-label">ჯვრისწერა</div>
+            <div class="info-value">13:00</div>
+            <div class="info-sub">აბასთუმანი</div>
+          </article>
+          <article class="card">
+            <div class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h5l-.6 6.2a2 2 0 0 1-3.8 0zM10.5 11.5V20M8 20h5M16 3h3l-.4 4.5"/><path d="M17.5 8v12M15.5 20h4"/></svg></div>
+            <div class="card-label">სტუმრების მიღება</div>
+            <div class="info-value">18:00</div>
+            <div class="info-sub">რესტორანი „რომანტიკა“</div>
+          </article>
+        </div>
+      </section>
+
+      <!-- Names -->
+      <section id="names" class="names-section">
+        <div class="reveal">
+          <div class="eyebrow">Together</div>
+          <p class="display-names">გურამი<span class="amp">&amp;</span>გულო</p>
+          <p class="names-place">ორი გული · ერთი ისტორია · ახალციხე</p>
+          <div class="divider"><span></span></div>
+        </div>
+      </section>
+
+      <!-- Gallery -->
+      <section id="gallery">
+        <div class="section-head reveal">
+          <div class="eyebrow">ჩვენი ისტორია</div>
+          <h2>წამები, რომლებიც გვიყვარს</h2>
+        </div>
+
+        <div class="reveal">
+          <div class="gallery-stage" id="galleryStage">
+            <div class="g-card"><img src="assets/photos/7.jpg" alt="რაბათის ციხეში" loading="lazy"></div>
+            <div class="g-card"><img src="assets/photos/4.jpg" alt="ხელის თხოვნა" loading="lazy"></div>
+            <div class="g-card"><img src="assets/photos/3.jpg" alt="გურამი და გულო ვარდებით" loading="lazy"></div>
+            <div class="g-card"><img src="assets/photos/5.jpg" alt="გურამი და გულო ტბის პირას" loading="lazy"></div>
+            <div class="g-card"><img src="assets/photos/6.jpg" alt="ნიშნობის ტორტი" loading="lazy"></div>
+            <div class="g-card"><img src="assets/photos/2.jpg" alt="რომში, კოლიზეუმთან" loading="lazy"></div>
+            <div class="g-card"><img src="assets/photos/1.jpg" alt="საღამოს სელფი" loading="lazy"></div>
+          </div>
+          <div class="gallery-dots" id="galleryDots" aria-hidden="true"></div>
+          <div class="gallery-hint" aria-hidden="true">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 5L8 12l6.5 7"/></svg>
+            <span>გადაფურცლე</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 5L16 12l-6.5 7"/></svg>
+          </div>
+
+          <div class="gallery-grid">
+            <div class="g-item"><img src="assets/photos/7.jpg" alt="" loading="lazy"></div>
+            <div class="g-item"><img src="assets/photos/4.jpg" alt="" loading="lazy"></div>
+            <div class="g-item"><img src="assets/photos/3.jpg" alt="" loading="lazy"></div>
+            <div class="g-item"><img src="assets/photos/5.jpg" alt="" loading="lazy"></div>
+            <div class="g-item"><img src="assets/photos/6.jpg" alt="" loading="lazy"></div>
+            <div class="g-item"><img src="assets/photos/2.jpg" alt="" loading="lazy"></div>
+            <div class="g-item wide"><img src="assets/photos/1.jpg" alt="" loading="lazy" style="object-position:50% 30%"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Timeline -->
+      <section id="timeline">
+        <div class="section-head reveal">
+          <div class="eyebrow">Day Timeline</div>
+          <h2>დღის განრიგი</h2>
+        </div>
+        <div class="timeline">
+          <div class="t-item">
+            <span class="t-dot" aria-hidden="true"></span>
+            <div class="t-time">13:00</div>
+            <h3 class="t-title">ჯვრისწერა</h3>
+            <div class="t-place">ალექსანდრე ნეველის ეკლესია, აბასთუმანი</div>
+            <p class="t-desc">ყველაზე წმინდა წუთები — ღვთის წინაშე ვდებთ ერთმანეთის ერთგულების აღთქმას.</p>
+          </div>
+          <div class="t-item">
+            <span class="t-dot" aria-hidden="true"></span>
+            <div class="t-time">16:00</div>
+            <h3 class="t-title">ფოტოსესია</h3>
+            <div class="t-place">რაბათის ციხე</div>
+            <p class="t-desc">ძველი კედლები, ოქროსგუმბათიანი მეჩეთი და შემოდგომის მზე — მოგონებები, რომლებიც სამუდამოდ დაგვრჩება.</p>
+          </div>
+          <div class="t-item">
+            <span class="t-dot" aria-hidden="true"></span>
+            <div class="t-time">17:00</div>
+            <h3 class="t-title">ხელის მოწერა</h3>
+            <div class="t-place">Akhaltsikhe Inn</div>
+            <p class="t-desc">ოფიციალურად ვიწყებთ საერთო ცხოვრებას — ერთი ხელმოწერით და დიდი სიყვარულით.</p>
+          </div>
+          <div class="t-item">
+            <span class="t-dot" aria-hidden="true"></span>
+            <div class="t-time">18:00</div>
+            <h3 class="t-title">სტუმრების მიღება</h3>
+            <div class="t-place">რესტორანი „რომანტიკა“</div>
+            <p class="t-desc">გემრიელი სუფრა, მუსიკა, ცეკვა და თბილი სადღეგრძელოები ჩვენთვის ყველაზე ძვირფას ადამიანებთან ერთად.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Location -->
+      <section id="location">
+        <div class="section-head reveal">
+          <div class="eyebrow">ლოკაცია</div>
+          <h2>სად შევხვდებით</h2>
+        </div>
+        <div class="loc-cards">
+          <article class="loc-card reveal">
+            <div class="loc-art">
+              <img src="assets/akhaltsikhe/abastumani-church.jpg" alt="ალექსანდრე ნეველის ეკლესია, აბასთუმანი" loading="lazy" style="object-position:50% 40%">
+              <a class="loc-maplink" href="https://www.google.com/maps/search/?api=1&amp;query=Alexander+Nevsky+Church+Abastumani" target="_blank" rel="noopener">
+                <span class="loc-badge">რუკაზე ნახვა</span>
+              </a>
+            </div>
+            <div class="loc-info">
+              <div class="loc-label">ჯვრისწერა</div>
+              <div class="loc-time">13:00</div>
+              <div class="loc-name">ალექსანდრე ნეველის ეკლესია</div>
+              <div class="loc-address">აბასთუმანი</div>
+            </div>
+          </article>
+
+          <article class="loc-card reveal">
+            <div class="loc-art">
+              <img src="assets/akhaltsikhe/rabati.jpg" alt="რაბათის ციხე, ახალციხე" loading="lazy" style="object-position:50% 50%">
+              <a class="loc-maplink" href="https://www.google.com/maps/search/?api=1&amp;query=Rabati+Castle+Akhaltsikhe" target="_blank" rel="noopener">
+                <span class="loc-badge">რუკაზე ნახვა</span>
+              </a>
+            </div>
+            <div class="loc-info">
+              <div class="loc-label">ფოტოსესია</div>
+              <div class="loc-time">16:00</div>
+              <div class="loc-name">რაბათის ციხე</div>
+              <div class="loc-address">ახალციხე, ხარაზიშვილის ქ.</div>
+            </div>
+          </article>
+
+          <article class="loc-card reveal">
+            <div class="loc-art">
+              <img src="assets/akhaltsikhe/akhaltsikhe-inn.jpg" alt="Akhaltsikhe Inn" loading="lazy" style="object-position:50% 50%">
+              <a class="loc-maplink" href="https://www.google.com/maps/search/?api=1&amp;query=Akhaltsikhe+Inn" target="_blank" rel="noopener">
+                <span class="loc-badge">რუკაზე ნახვა</span>
+              </a>
+            </div>
+            <div class="loc-info">
+              <div class="loc-label">ხელის მოწერა</div>
+              <div class="loc-time">17:00</div>
+              <div class="loc-name">Akhaltsikhe Inn</div>
+              <div class="loc-address">ახალციხე</div>
+            </div>
+          </article>
+
+          <article class="loc-card reveal">
+            <div class="loc-art">
+              <img src="assets/akhaltsikhe/romantika.jpg" alt="რესტორანი „რომანტიკა“" loading="lazy" style="object-position:50% 45%">
+              <a class="loc-maplink" href="https://www.google.com/maps/search/?api=1&amp;query=Romantika+Restaurant+132+Shota+Rustaveli+St+Akhaltsikhe" target="_blank" rel="noopener">
+                <span class="loc-badge">რუკაზე ნახვა</span>
+              </a>
+            </div>
+            <div class="loc-info">
+              <div class="loc-label">სტუმრების მიღება</div>
+              <div class="loc-time">18:00</div>
+              <div class="loc-name">რესტორანი „რომანტიკა“</div>
+              <div class="loc-address">შოთა რუსთაველის ქ. №132, ახალციხე</div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- RSVP -->
+      <section id="rsvp">
+        <div class="section-head reveal">
+          <div class="eyebrow">RSVP</div>
+          <h2>დაგვიდასტურეთ დასწრება</h2>
+          <p>გთხოვთ, გვაცნობოთ, შეძლებთ თუ არა ჩვენი დღის გაზიარებას.</p>
+        </div>
+        <div class="rsvp-card reveal">
+          <div id="rsvpFormWrap">
+            <form class="rsvp-form" id="rsvpForm" novalidate>
+              <div class="field" id="nameField">
+                <label class="input-label" for="guestName">სახელი და გვარი</label>
+                <input class="text-input" id="guestName" name="guestName" type="text" placeholder="სახელი და გვარი" autocomplete="name" maxlength="120">
+              </div>
+
+              <div class="field" id="attendanceField">
+                <div class="input-label">დასწრება</div>
+                <div class="attendance-row">
+                  <button class="attend-button" id="attendYes" type="button" aria-pressed="false">✓ მოვალ</button>
+                  <button class="attend-button" id="attendNo" type="button" aria-pressed="false">✕ ვერ მოვალ</button>
+                </div>
+              </div>
+
+              <div class="field guests-field" id="guestsField">
+                <div class="counter-row">
+                  <div class="input-label">სტუმართა რაოდენობა</div>
+                  <div class="counter-controls">
+                    <button class="counter-btn" type="button" id="decreaseGuests" aria-label="შემცირება">−</button>
+                    <div class="guest-number" id="guestCount" aria-live="polite">1</div>
+                    <button class="counter-btn" type="button" id="increaseGuests" aria-label="გაზრდა">+</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="field">
+                <label class="input-label" for="guestMessage">შეტყობინება (არასავალდებულო)</label>
+                <textarea class="text-input" id="guestMessage" name="guestMessage" rows="3" maxlength="1000"></textarea>
+              </div>
+
+              <button class="submit-button" type="submit" id="submitBtn">გაგზავნა</button>
+              <div class="form-error" id="formError" role="alert"></div>
+              <div class="form-note">პასუხი პირდაპირ ორგანიზატორს მიუვა</div>
+            </form>
+          </div>
+
+          <div class="success-message" id="successMessage" aria-live="polite">
+            <div class="success-icon">🍂</div>
+            <h3 class="success-title">მადლობა</h3>
+            <p class="success-copy" id="successCopy"></p>
+            <button class="link-button" type="button" id="rsvpAgain">სხვა სტუმრის დამატება</button>
+          </div>
+        </div>
+      </section>
+
+      <footer class="footer reveal">
+        <!-- Rabati again at the end, by now under the night sky: floodlit
+             stone and lit windows, the way the castle looks after dark. -->
+        <svg class="footer-castle" viewBox="250 40 720 270" aria-hidden="true">
+          <ellipse class="rb-glow" cx="610" cy="200" rx="420" ry="140" fill="url(#castleGlow)"/>
+          <use class="rb-castle night" href="#rb-body" width="1200" height="320"/>
+          <use class="rb-dome" href="#rb-dome" width="1200" height="320"/>
+          <use class="rb-slits" href="#rb-windows" width="1200" height="320"/>
+          <use class="rb-lit" href="#rb-windows" width="1200" height="320"/>
+          <rect x="551" y="56" width="2" height="36" fill="#3B2E24"/>
+          <g class="rb-flag">
+            <rect x="553" y="57" width="30" height="20" fill="#FBF8F1"/>
+            <rect x="566" y="57" width="4" height="20" fill="#D6262E"/>
+            <rect x="553" y="65" width="30" height="4" fill="#D6262E"/>
+          </g>
+        </svg>
+        <div class="footer-script">Guram &amp; Gulo</div>
+        <div class="footer-date">24 October 2026 · Akhaltsikhe</div>
+        <p class="footer-note">Made with love</p>
+      </footer>
+
+    </div>
+  </main>
+</div>
+
+<audio id="music" src="assets/audio/music.mp3" loop preload="auto"></audio>
+<button class="music-btn" id="musicBtn" type="button" aria-label="მუსიკის გამორთვა" aria-pressed="true">
+  <svg class="icon-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M4 9.5h3.2L12 5.4v13.2L7.2 14.5H4z"/>
+    <path d="M16 9.4a3.6 3.6 0 0 1 0 5.2"/>
+    <path d="M18.6 6.8a7.2 7.2 0 0 1 0 10.4"/>
+  </svg>
+  <svg class="icon-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M4 9.5h3.2L12 5.4v13.2L7.2 14.5H4z"/>
+    <path d="M16.5 10l4 4"/>
+    <path d="M20.5 10l-4 4"/>
+  </svg>
+</button>
+
+<div class="petal-layer" id="petalLayer" aria-hidden="true"></div>
+
+<!-- RSVP storage (Firebase). Loaded as a module; exposes window.rsvpStore. -->
+<script type="module" src="assets/js/rsvp-store.js"></script>
+
+<script>
+(function(){
+  "use strict";
+
+  var REDUCED = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var root = document.documentElement;
+  var body = document.body;
+
+  /* ============================================================
+     1. OPENING GATE — seal, flap, letter; then names, portrait, page.
+     ============================================================ */
+  var gate = document.getElementById("gate");
+  var gateStage = "closed";
+  root.classList.add("gate-lock");
+
+  function openGate(){
+    if(gateStage !== "closed") return;
+    gateStage = "opening";
+    startMusic();
+    var closed   = gate.querySelector(".gate-closed");
+    var initials = gate.querySelector(".gate-initials");
+    var portrait = gate.querySelector(".gate-portrait");
+
+    // Each step is one true crossfade: the leaving panel and the arriving
+    // panel move over the same duration, so there is no dead gap.
+    var T = REDUCED
+      ? {env:1400, cross:300, holdA:420, holdB:520, out:340}
+      : {env:3900, cross:700, holdA:1050, holdB:1300, out:1100};
+
+    closed.classList.add("opening");          // seal lifts, flap opens, letter rises
+    setTimeout(function(){
+      closed.classList.remove("active"); closed.classList.add("leaving");
+      initials.classList.add("active");
+      setTimeout(function(){
+        initials.classList.remove("active"); initials.classList.add("leaving");
+        portrait.classList.add("active");
+        setTimeout(function(){
+          gate.classList.add("fade-out");
+          portrait.classList.add("settle");
+          setTimeout(function(){
+            gate.classList.add("hidden");
+            root.classList.remove("gate-lock");
+            gateStage = "done";
+            body.classList.add("opened");   // hero animations start here
+            onScroll();
+          }, T.out);
+        }, T.cross + T.holdB);
+      }, T.cross + T.holdA);
+    }, T.env);
+  }
+
+  gate.addEventListener("click", openGate);
+  gate.addEventListener("keydown", function(e){
+    if(e.key === "Enter" || e.key === " "){ e.preventDefault(); openGate(); }
+  });
+
+  /* ============================================================
+     1b. SOUND — started from inside the gate's own click handler,
+     the gesture that buys permission to play.
+     ============================================================ */
+  var music = document.getElementById("music");
+  var musicBtn = document.getElementById("musicBtn");
+  var MUSIC_KEY = "gg_music_off";
+  var VOLUME = 0.55;
+  var fadeTimer = null;
+
+  function musicWanted(){
+    try{ return localStorage.getItem(MUSIC_KEY) !== "1"; }
+    catch(e){ return true; }
+  }
+  function rememberMusic(on){
+    try{ localStorage.setItem(MUSIC_KEY, on ? "0" : "1"); }catch(e){}
+  }
+  function paintMusicBtn(on){
+    musicBtn.classList.toggle("is-off", !on);
+    musicBtn.setAttribute("aria-pressed", on ? "true" : "false");
+    musicBtn.setAttribute("aria-label", on ? "მუსიკის გამორთვა" : "მუსიკის ჩართვა");
+  }
+
+  /* A new fade cancels both the old ramp AND its callback, so a pause
+     scheduled by a superseded fade never lands on wanted playback. */
+  function fadeVolume(to, ms, done){
+    if(fadeTimer){ clearInterval(fadeTimer.id); fadeTimer = null; }
+    var from = music.volume, steps = Math.max(1, Math.round(ms/50)), i = 0;
+    var token = {};
+    token.id = setInterval(function(){
+      i++;
+      music.volume = Math.max(0, Math.min(1, from + (to - from) * (i/steps)));
+      if(i >= steps){
+        clearInterval(token.id);
+        if(fadeTimer === token){ fadeTimer = null; if(done) done(); }
+      }
+    }, 50);
+    fadeTimer = token;
+  }
+
+  // The icon follows the element's own play/pause events, which cannot drift.
+  music.addEventListener("play",  function(){ paintMusicBtn(true); });
+  music.addEventListener("pause", function(){ paintMusicBtn(false); });
+
+  function playMusic(fadeMs){
+    music.volume = 0;
+    fadeVolume(VOLUME, fadeMs);
+    var p = music.play();
+    if(p && p.catch){
+      p.catch(function(){
+        setTimeout(function(){
+          if(!music.paused) return;
+          var q = music.play();
+          if(q && q.catch) q.catch(function(){});
+        }, 60);
+      });
+    }
+  }
+
+  // Muting is synchronous: someone pressing mute wants silence now.
+  function stopMusic(){
+    if(fadeTimer){ clearInterval(fadeTimer.id); fadeTimer = null; }
+    music.pause();
+  }
+
+  function startMusic(){
+    if(!musicWanted()) return;
+    playMusic(2200);
+  }
+
+  musicBtn.addEventListener("click", function(){
+    if(music.paused){ rememberMusic(true);  playMusic(700); }
+    else            { rememberMusic(false); stopMusic(); }
+  });
+
+  paintMusicBtn(false);
+
+  /* ============================================================
+     2. DAY -> DUSK -> NIGHT
+     One scroll-driven value, `p`, drives every colour token plus the
+     sky, sunset band, stars, sun, moon and the castle's lit windows.
+     ============================================================ */
+  var DAY = {
+    bg:[250,244,232], ink:[46,40,32], inkSoft:[98,88,74], inkFaint:[150,138,120],
+    accent:[92,107,58], rose:[176,108,82], gold:[176,137,74],
+    surface:[255,252,245], surfaceA:0.74,
+    surface2:[241,231,212], surface2A:0.82,
+    lineRGB:[46,40,32], lineA:0.15
+  };
+  var NIGHT = {
+    bg:[18,20,30], ink:[240,232,218], inkSoft:[198,190,174], inkFaint:[140,134,122],
+    accent:[196,208,146], rose:[232,176,150], gold:[228,192,126],
+    surface:[255,255,255], surfaceA:0.055,
+    surface2:[255,255,255], surface2A:0.085,
+    lineRGB:[240,232,218], lineA:0.14
+  };
+
+  function lerp(a,b,t){ return a + (b-a)*t; }
+  function mixRGB(a,b,t){
+    return "rgb(" + Math.round(lerp(a[0],b[0],t)) + "," +
+                    Math.round(lerp(a[1],b[1],t)) + "," +
+                    Math.round(lerp(a[2],b[2],t)) + ")";
+  }
+  function mixRGBA(ca,aa,cb,ab,t){
+    return "rgba(" + Math.round(lerp(ca[0],cb[0],t)) + "," +
+                     Math.round(lerp(ca[1],cb[1],t)) + "," +
+                     Math.round(lerp(ca[2],cb[2],t)) + "," +
+                     lerp(aa,ab,t).toFixed(3) + ")";
+  }
+
+  var themeMeta = document.querySelector('meta[name="theme-color"]');
+  var sunEl  = document.getElementById("sun");
+  var moonEl = document.getElementById("moon");
+  var lastP = -1;
+
+  function clamp01(v){ return v < 0 ? 0 : (v > 1 ? 1 : v); }
+  function smooth(v){ v = clamp01(v); return v*v*(3 - 2*v); }
+
+  function applyPhase(p){
+    if(Math.abs(p - lastP) < 0.002) return;
+    lastP = p;
+
+    /* The sky dusks slowly; the INK crosses over quickly in the middle,
+       with `halo` blooming over just that crossing to carry the text. */
+    var ink  = smooth((p - 0.46) / 0.08);
+    var halo = Math.max(0, 1 - Math.abs(p - 0.50) / 0.17);
+    // Sunset band: rises with the sun going down, gone by full night.
+    var dusk = Math.max(0, Math.sin(Math.PI * clamp01((p - 0.12) / 0.78)));
+
+    var s = root.style;
+    s.setProperty("--night", p.toFixed(4));
+    s.setProperty("--dusk", dusk.toFixed(4));
+    s.setProperty("--bg",        mixRGB(DAY.bg, NIGHT.bg, p));
+    s.setProperty("--ink",       mixRGB(DAY.ink, NIGHT.ink, ink));
+    s.setProperty("--ink-soft",  mixRGB(DAY.inkSoft, NIGHT.inkSoft, ink));
+    s.setProperty("--ink-faint", mixRGB(DAY.inkFaint, NIGHT.inkFaint, ink));
+    s.setProperty("--accent",    mixRGB(DAY.accent, NIGHT.accent, ink));
+    s.setProperty("--rose",      mixRGB(DAY.rose, NIGHT.rose, ink));
+    s.setProperty("--gold",      mixRGB(DAY.gold, NIGHT.gold, ink));
+    s.setProperty("--surface",   mixRGBA(DAY.surface, DAY.surfaceA, NIGHT.surface, NIGHT.surfaceA, p));
+    s.setProperty("--surface-2", mixRGBA(DAY.surface2, DAY.surface2A, NIGHT.surface2, NIGHT.surface2A, p));
+    s.setProperty("--line",      mixRGBA(DAY.lineRGB, DAY.lineA, NIGHT.lineRGB, NIGHT.lineA, ink));
+    s.setProperty("--shadow", "0 18px 50px -24px rgba(" +
+      (p < .5 ? "52,40,24," + (0.40*(1-p)).toFixed(2) : "0,0,0," + (0.55*p).toFixed(2)) + ")");
+    s.setProperty("--text-halo", halo < 0.01 ? "none"
+      : "0 0 12px rgba(255,250,240," + (0.95*halo*(1-ink)).toFixed(3) + "), " +
+        "0 0 12px rgba(8,8,14,"       + (0.95*halo*ink).toFixed(3) + ")");
+    if(themeMeta) themeMeta.setAttribute("content", mixRGB(DAY.bg, NIGHT.bg, p));
+
+    // The sun sinks behind the Meskheti ridge and reddens; the moon climbs.
+    if(sunEl){
+      sunEl.style.transform = "translate3d(" + (p*7).toFixed(2) + "vw," + (p*78).toFixed(2) + "vh,0) scale(" + (1 - p*0.15).toFixed(3) + ")";
+      sunEl.style.opacity = Math.max(0, 1 - p*1.45).toFixed(3);
+      sunEl.style.filter = "hue-rotate(" + (-p*26).toFixed(1) + "deg) saturate(" + (1 + p*0.6).toFixed(2) + ")";
+    }
+    if(moonEl){
+      moonEl.style.transform = "translate3d(0," + ((1-p)*72).toFixed(2) + "vh,0)";
+      moonEl.style.opacity = Math.max(0, (p - 0.35) / 0.5).toFixed(3);
+    }
+  }
+
+  /* ============================================================
+     3. STARFIELD — drawn once, revealed by the --night opacity.
+     ============================================================ */
+  var canvas = document.getElementById("starfield");
+  var ctx = canvas.getContext("2d");
+
+  function buildStars(){
+    var w = window.innerWidth, h = window.innerHeight;
+    var ratio = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.floor(w*ratio);
+    canvas.height = Math.floor(h*ratio);
+    canvas.style.width = w + "px";
+    canvas.style.height = h + "px";
+    ctx.setTransform(ratio,0,0,ratio,0,0);
+    ctx.clearRect(0,0,w,h);
+    var count = Math.round(Math.min(220, (w*h)/5200));
+    for(var i=0;i<count;i++){
+      ctx.beginPath();
+      ctx.fillStyle = "rgba(244,238,226," + (Math.random()*0.7 + 0.25) + ")";
+      ctx.arc(Math.random()*w, Math.random()*h*0.86, Math.random()*1.5 + 0.35, 0, Math.PI*2);
+      ctx.fill();
+    }
+  }
+
+  /* ============================================================
+     4. SCROLL
+     ============================================================ */
+  var heroParallax = document.getElementById("heroParallax");
+  var hero = document.getElementById("hero");
+  var heroContent = document.querySelector(".hero-content");
+  var ticking = false;
+
+  function nightProgress(){
+    var doc = document.documentElement;
+    var scrollable = Math.max(1, doc.scrollHeight - window.innerHeight);
+    // Full night a little past halfway, so schedule, venues and RSVP are
+    // read under a settled night sky over a lit-up Rabati.
+    var t = Math.max(0, Math.min(1, (window.scrollY || window.pageYOffset) / (scrollable * 0.74)));
+    return t*t*(3 - 2*t);
+  }
+
+  function updateHero(){
+    if(!heroParallax) return;
+    var y = window.scrollY || window.pageYOffset;
+    var h = hero.offsetHeight || window.innerHeight;
+    if(y > h * 1.2) return;
+    heroParallax.style.transform = "translateY(" + (y*0.4) + "px)";
+    heroParallax.style.opacity = Math.max(0, 1 - y/(window.innerHeight*0.78));
+    if(heroContent && body.classList.contains("opened")){
+      var t = Math.max(0, Math.min(1, y/(h*0.72)));
+      heroContent.style.opacity = String(1 - t);
+      if(!REDUCED) heroContent.style.transform = "translateY(" + (t*24) + "px)";
+    }
+  }
+
+  /* Text that has already been read dissolves away above the fold. */
+  function updateExitFade(){
+    if(REDUCED) return;
+    var vh = window.innerHeight;
+    var start = vh*0.14, end = -vh*0.40;
+    var els = document.querySelectorAll(".reveal.scroll-linked");
+    for(var i=0;i<els.length;i++){
+      var b = els[i].getBoundingClientRect().bottom;
+      var op = b >= start ? 1 : (b <= end ? 0 : (b - end)/(start - end));
+      els[i].style.opacity = String(Math.max(0, Math.min(1, op)));
+    }
+  }
+
+  function onScroll(){
+    if(ticking) return;
+    ticking = true;
+    window.requestAnimationFrame(function(){
+      applyPhase(nightProgress());
+      updateHero();
+      updateExitFade();
+      ticking = false;
+    });
+  }
+
+  window.addEventListener("scroll", onScroll, {passive:true});
+
+  (function dimWhileScrolling(){
+    var t = null;
+    window.addEventListener("scroll", function(){
+      musicBtn.classList.add("dim");
+      if(t) clearTimeout(t);
+      t = setTimeout(function(){ musicBtn.classList.remove("dim"); }, 900);
+    }, {passive:true});
+  })();
+  window.addEventListener("resize", function(){ buildStars(); lastP = -1; onScroll(); });
+
+  /* ============================================================
+     5. REVEAL
+     ============================================================ */
+  var revealObserver = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(!en.isIntersecting) return;
+      en.target.classList.add("is-visible");
+      revealObserver.unobserve(en.target);
+      if(en.target.classList.contains("reveal")){
+        setTimeout(function(){ en.target.classList.add("scroll-linked"); }, 850);
+      }
+    });
+  }, {threshold:0.14, rootMargin:"0px 0px -6% 0px"});
+
+  document.querySelectorAll(".reveal").forEach(function(el){ revealObserver.observe(el); });
+
+  var tItems = document.querySelectorAll(".t-item");
+  var timelineObserver = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(!en.isIntersecting) return;
+      var idx = Array.prototype.indexOf.call(tItems, en.target);
+      en.target.style.transitionDelay = (idx % 5) * 110 + "ms";
+      en.target.classList.add("is-visible");
+      timelineObserver.unobserve(en.target);
+    });
+  }, {threshold:0.2});
+  tItems.forEach(function(el){ timelineObserver.observe(el); });
+
+  /* ============================================================
+     6. COUNTDOWN — in Georgian time, so a guest abroad sees the
+     Akhaltsikhe clock, not their own.
+     ============================================================ */
+  var TARGET = new Date("2026-10-24T13:00:00+04:00").getTime();
+  var cd = {d:document.getElementById("cd-d"), h:document.getElementById("cd-h"),
+            m:document.getElementById("cd-m"), s:document.getElementById("cd-s")};
+  function pad(n){ return n < 10 ? "0"+n : ""+n; }
+  function tickCountdown(){
+    var diff = TARGET - Date.now();
+    if(diff <= 0){ cd.d.textContent = cd.h.textContent = cd.m.textContent = cd.s.textContent = "00"; return; }
+    var sec = Math.floor(diff/1000);
+    cd.d.textContent = pad(Math.floor(sec/86400));
+    cd.h.textContent = pad(Math.floor(sec/3600) % 24);
+    cd.m.textContent = pad(Math.floor(sec/60) % 60);
+    cd.s.textContent = pad(sec % 60);
+  }
+  tickCountdown();
+  setInterval(tickCountdown, 1000);
+
+  /* ============================================================
+     7. GALLERY DECK — a swipe of any speed advances exactly one photo.
+     ============================================================ */
+  (function initDeck(){
+    var stage = document.getElementById("galleryStage");
+    if(!stage) return;
+    var cards = Array.prototype.slice.call(stage.querySelectorAll(".g-card"));
+    var dotsWrap = document.getElementById("galleryDots");
+    var n = cards.length;
+    var top = 0;
+    var dragging = false, startX = 0, startY = 0, dx = 0, locked = null;
+
+    cards.forEach(function(){ dotsWrap.appendChild(document.createElement("i")); });
+    var dots = Array.prototype.slice.call(dotsWrap.children);
+
+    function layout(dragOffset){
+      for(var i=0;i<n;i++){
+        var depth = (i - top + n) % n;          // 0 = front card
+        var card = cards[i];
+        if(depth > 2){ card.style.opacity = "0"; card.style.pointerEvents = "none"; card.style.zIndex = "0"; continue; }
+        var off = (depth === 0 ? (dragOffset||0) : 0);
+        var rot = depth === 0 ? off/26 : (depth === 1 ? 2.4 : -2.0);
+        var scale = 1 - depth*0.05;
+        var lift = depth*10;
+        card.style.zIndex = String(10 - depth);
+        card.style.opacity = depth === 0 ? "1" : (depth === 1 ? "0.85" : "0.6");
+        card.style.pointerEvents = depth === 0 ? "auto" : "none";
+        card.style.transition = dragging ? "none" : "transform .42s cubic-bezier(.2,.7,.3,1), opacity .42s ease";
+        card.style.transform = "translate3d(" + off + "px," + lift + "px,0) rotate(" + rot + "deg) scale(" + scale + ")";
+      }
+      dots.forEach(function(d,i){ d.classList.toggle("on", i === top); });
+    }
+
+    function advance(dir){ top = (top + dir + n) % n; layout(0); }
+
+    stage.addEventListener("pointerdown", function(e){
+      dragging = true; locked = null; dx = 0;
+      startX = e.clientX; startY = e.clientY;
+      stage.setPointerCapture(e.pointerId);
+    });
+    stage.addEventListener("pointermove", function(e){
+      if(!dragging) return;
+      var mx = e.clientX - startX, my = e.clientY - startY;
+      if(locked === null){
+        if(Math.abs(mx) < 6 && Math.abs(my) < 6) return;
+        locked = Math.abs(mx) > Math.abs(my) ? "x" : "y";
+      }
+      if(locked !== "x") return;
+      e.preventDefault();
+      dx = mx;
+      layout(dx);
+    });
+    function endDrag(){
+      if(!dragging) return;
+      dragging = false;
+      if(locked === "x" && Math.abs(dx) > 55) advance(dx < 0 ? 1 : -1);
+      else layout(0);
+      dx = 0; locked = null;
+    }
+    stage.addEventListener("pointerup", endDrag);
+    stage.addEventListener("pointercancel", endDrag);
+    stage.addEventListener("click", function(){ if(locked === null) advance(1); });
+
+    layout(0);
+  })();
+
+  /* ============================================================
+     8. RSVP — answers go to Firestore via window.rsvpStore
+     (assets/js/rsvp-store.js) and land in the organiser's admin page.
+     ============================================================ */
+  var guestNameInput = document.getElementById("guestName");
+  var guestMessage   = document.getElementById("guestMessage");
+  var guestCountEl   = document.getElementById("guestCount");
+  var guestsField    = document.getElementById("guestsField");
+  var attendanceField= document.getElementById("attendanceField");
+  var nameField      = document.getElementById("nameField");
+  var attendYes      = document.getElementById("attendYes");
+  var attendNo       = document.getElementById("attendNo");
+  var rsvpForm       = document.getElementById("rsvpForm");
+  var rsvpFormWrap   = document.getElementById("rsvpFormWrap");
+  var submitBtn      = document.getElementById("submitBtn");
+  var formError      = document.getElementById("formError");
+  var successMessage = document.getElementById("successMessage");
+  var successCopy    = document.getElementById("successCopy");
+  var petalLayer     = document.getElementById("petalLayer");
+  var SENT_KEY = "gg_rsvp_sent";
+
+  var guests = 1, attendance = "", sending = false;
+
+  document.getElementById("decreaseGuests").addEventListener("click", function(){
+    guests = Math.max(1, guests - 1); guestCountEl.textContent = guests;
+  });
+  document.getElementById("increaseGuests").addEventListener("click", function(){
+    guests = Math.min(20, guests + 1); guestCountEl.textContent = guests;
+  });
+  function setAttendance(v){
+    attendance = v;
+    attendYes.classList.toggle("active-yes", v === "yes");
+    attendNo.classList.toggle("active-no",  v === "no");
+    attendYes.setAttribute("aria-pressed", v === "yes" ? "true" : "false");
+    attendNo.setAttribute("aria-pressed",  v === "no"  ? "true" : "false");
+    // A guest who can't come isn't bringing anyone.
+    guestsField.classList.toggle("muted", v === "no");
+    attendanceField.classList.remove("invalid");
+  }
+  attendYes.addEventListener("click", function(){ setAttendance("yes"); });
+  attendNo.addEventListener("click", function(){ setAttendance("no"); });
+
+  // Start loading Firebase as soon as the guest starts on the form, so
+  // pressing send doesn't wait on the SDK download.
+  rsvpForm.addEventListener("focusin", function(){
+    if(window.rsvpStore && window.rsvpStore.warm) window.rsvpStore.warm();
+  }, {once:true});
+
+  function pulseInvalid(el){
+    el.classList.add("invalid");
+    setTimeout(function(){ el.classList.remove("invalid"); }, 900);
+  }
+  function showError(msg){
+    formError.textContent = msg;
+    formError.classList.toggle("show", !!msg);
+  }
+
+  var PETAL_COLORS = ["rgba(214,150,78,.92)","rgba(190,96,62,.88)","rgba(232,196,120,.92)","rgba(160,128,70,.88)","rgba(255,214,196,.9)"];
+  function createPetals(){
+    for(var i=0;i<22;i++){
+      (function(){
+        var petal = document.createElement("div");
+        petal.className = "petal" + (Math.random() < .55 ? " leaf" : "");
+        petal.style.left = (Math.random()*100) + "vw";
+        petal.style.background = PETAL_COLORS[Math.floor(Math.random()*PETAL_COLORS.length)];
+        petal.style.animationDuration = (5.6 + Math.random()*2.4) + "s";
+        petal.style.animationDelay = (Math.random()*0.6) + "s";
+        petal.style.setProperty("--drift", (-60 + Math.random()*120) + "px");
+        petalLayer.appendChild(petal);
+        setTimeout(function(){ petal.remove(); }, 8600);
+      })();
+    }
+  }
+
+  function showSuccess(entry, celebrate){
+    rsvpFormWrap.style.display = "none";
+    successMessage.classList.add("show");
+    successCopy.textContent = entry.attendance === "yes"
+      ? "ძალიან გვიხარია, " + entry.name + ", რომ " + (entry.guests > 1 ? entry.guests + " სტუმართან ერთად " : "") + "ჩვენს დღეს გაგვიზიარებთ."
+      : "მადლობა, " + entry.name + ". თქვენი პასუხი მივიღეთ და მთელი გულით ვგრძნობთ თქვენს სითბოს ამ დღისთვის.";
+    if(celebrate && entry.attendance === "yes") createPetals();
+  }
+
+  // A guest who already answered on this device sees their confirmation.
+  try{
+    var prev = JSON.parse(localStorage.getItem(SENT_KEY) || "null");
+    if(prev && prev.name) showSuccess(prev, false);
+  }catch(e){}
+
+  document.getElementById("rsvpAgain").addEventListener("click", function(){
+    successMessage.classList.remove("show");
+    rsvpFormWrap.style.display = "";
+    rsvpForm.reset();
+    guests = 1; guestCountEl.textContent = "1";
+    setAttendance("");
+    showError("");
+    guestNameInput.focus();
+  });
+
+  rsvpForm.addEventListener("submit", function(e){
+    e.preventDefault();
+    if(sending) return;
+    showError("");
+    var name = guestNameInput.value.trim().slice(0,120);
+    var ok = true;
+    if(!name){ pulseInvalid(nameField); ok = false; }
+    if(!attendance){ pulseInvalid(attendanceField); ok = false; }
+    if(!ok) return;
+
+    var entry = {
+      name: name,
+      attendance: attendance,
+      guests: attendance === "yes" ? guests : 0,
+      message: guestMessage.value.trim().slice(0,1000)
+    };
+
+    if(!window.rsvpStore){
+      showError("კავშირის პრობლემაა — გთხოვთ, შეამოწმეთ ინტერნეტი და სცადეთ თავიდან.");
+      return;
+    }
+
+    sending = true;
+    submitBtn.disabled = true;
+    submitBtn.textContent = "იგზავნება…";
+    window.rsvpStore.save(entry).then(function(){
+      try{ localStorage.setItem(SENT_KEY, JSON.stringify(entry)); }catch(err){}
+      showSuccess(entry, true);
+    }).catch(function(err){
+      console.error("RSVP save failed", err);
+      showError("პასუხი ვერ გაიგზავნა. გთხოვთ, სცადეთ თავიდან რამდენიმე წამში.");
+    }).then(function(){
+      sending = false;
+      submitBtn.disabled = false;
+      submitBtn.textContent = "გაგზავნა";
+    });
+  });
+
+  /* ============================================================
+     9. BOOT
+     ============================================================ */
+  buildStars();
+  applyPhase(0);
+  onScroll();
+
+  if(REDUCED){
+    body.classList.add("opened");
+  }
+})();
+</script>
+</body>
+</html>
